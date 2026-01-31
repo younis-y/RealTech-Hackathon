@@ -120,22 +120,22 @@ def verify_api(api_id: str, config: Dict) -> Tuple[bool, str]:
 
         # Check response
         if response.status_code == 200:
-            return True, "✅ Connected"
+            return True, "[OK] Connected"
         elif response.status_code == 401:
-            return False, f"❌ Authentication failed (check {env_var})"
+            return False, f"[FAIL] Authentication failed (check {env_var})"
         elif response.status_code == 403:
-            return False, f"❌ Forbidden (check API permissions)"
+            return False, f"[FAIL] Forbidden (check API permissions)"
         elif response.status_code == 429:
-            return False, "⚠️  Rate limited (but connection works)"
+            return False, "[WARN] Rate limited (but connection works)"
         else:
-            return False, f"❌ HTTP {response.status_code}"
+            return False, f"[FAIL] HTTP {response.status_code}"
 
     except requests.exceptions.Timeout:
-        return False, "❌ Connection timeout"
+        return False, "[FAIL] Connection timeout"
     except requests.exceptions.ConnectionError:
-        return False, "❌ Connection failed (check internet)"
+        return False, "[FAIL] Connection failed (check internet)"
     except Exception as e:
-        return False, f"❌ Error: {str(e)}"
+        return False, f"[FAIL] Error: {str(e)}"
 
 
 def verify_anthropic() -> Tuple[bool, str]:
@@ -157,16 +157,16 @@ def verify_anthropic() -> Tuple[bool, str]:
         )
 
         if message.content:
-            return True, "✅ Connected"
+            return True, "[OK] Connected"
         else:
-            return False, "❌ No response from API"
+            return False, "[FAIL] No response from API"
 
     except ImportError:
-        return False, "❌ anthropic package not installed (pip install anthropic)"
+        return False, "[FAIL] anthropic package not installed (pip install anthropic)"
     except anthropic.AuthenticationError:
-        return False, "❌ Authentication failed (check ANTHROPIC_API_KEY)"
+        return False, "[FAIL] Authentication failed (check ANTHROPIC_API_KEY)"
     except Exception as e:
-        return False, f"❌ Error: {str(e)}"
+        return False, f"[FAIL] Error: {str(e)}"
 
 
 def verify_all_apis(verbose: bool = False) -> Dict[str, Dict]:
@@ -229,13 +229,13 @@ def print_summary(results: Dict[str, Dict]) -> None:
     all_required_pass = required_pass == required_total
 
     if all_required_pass:
-        print("✅ READY TO PROCEED - All required APIs verified")
+        print("[SUCCESS] READY TO PROCEED - All required APIs verified")
         print("")
         print("Next steps:")
         print("1. Proceed to Phase 3: Architect (build tools/)")
         print("2. Update gemini.md Link status to verified")
     else:
-        print("❌ NOT READY - Some required APIs failed")
+        print("[FAILED] NOT READY - Some required APIs failed")
         print("")
         print("Action required:")
         for api_id, result in results.items():
@@ -261,8 +261,8 @@ def update_gemini_md(results: Dict[str, Dict]) -> None:
         print("Update gemini.md:")
         print("-" * 80)
         for api_id, result in results.items():
-            status = "✅ VERIFIED" if result["success"] else "❌ FAILED"
-            print(f"| {result['name']:30} | {status:12} | {result['message']:30} |")
+            status = "[OK] VERIFIED" if result["success"] else "[FAIL] FAILED"
+            print(f"| {result['name']:30} | {status:15} | {result['message']:30} |")
         print("-" * 80)
 
     except Exception as e:
