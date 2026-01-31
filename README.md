@@ -48,46 +48,10 @@ Veo is an intelligent property recommendation system that helps users find the p
 
 ## Architecture Overview
 
-<img width="1017" height="670" alt="image" src="https://github.com/user-attachments/assets/08b83d8b-521b-4af1-99a7-ce8e35439e50" />
+****
+****
+****
 
-
-
-The system follows a modular 3-layer architecture where the **AI Orchestrator (Claude)** reads high-level **Directives** (Markdown SOPs) to determine which deterministic **Execution Scripts** (Python) to trigger. This approach ensures that business logic remains flexible while data processing remains reliable and fast.
-
-The Veo Housing Platform employs a unique **3-Layer AI Orchestration Architecture** that separates directive-based instructions from intelligent routing and deterministic script execution. This architectural pattern ensures reliability, maintainability, and self-improvement capabilities whilst leveraging the probabilistic nature of large language models only where appropriate.
-
-### The 3-Layer Pattern
-
-1. **Layer 1: Directives (The Brain)** - Markdown-based Standard Operating Procedures (SOPs) that define the "how-to" for every system task. These directives contain business logic, persona-specific scoring weights, and workflow definitions.
-
-2. **Layer 2: Orchestrator (The Manager)** - An LLM-powered (Anthropic Claude) decision-making layer that reads directives, interprets user intent, routes tasks to appropriate execution scripts, and synthesizes final results with natural language explanations.
-
-3. **Layer 3: Execution (The Workers)** - Deterministic Python scripts that perform specific, stateless tasks like API requests, data cleaning, scoring calculations, and result formatting. These return structured JSON data to the Orchestrator.
-
-<img width="1017" height="670" alt="image" src="https://github.com/user-attachments/assets/08b83d8b-521b-4af1-99a7-ce8e35439e50" />
-
-### Key Components
-
-**AI Orchestrator (Layer 2)**
-- Interprets user intent and persona requirements
-- Reads task-specific directives for workflow guidance
-- Routes calls to execution scripts in parallel when possible
-- Synthesizes results and generates natural language explanations
-- Implements self-annealing capabilities to diagnose and recover from API failures
-
-**Directives (Layer 1)**
-- Define data fetching strategies and API integration patterns
-- Specify persona-specific scoring weights (e.g., students prioritize affordability + commute)
-- Document output formats and data structures
-- Enable system updates without code changes
-
-**Execution Scripts (Layer 3)**
-- **ScanSan Integration**: Fetches property intelligence, investment quality, and affordability scores
-- **TfL Integration**: Calculates precise commute times to user-specified destinations
-- **UK Police API**: Retrieves localized crime statistics and safety ratings
-- **GIAS/Ofsted Integration**: Provides school performance data and catchment areas
-- **Scoring Engine**: Applies persona-specific weights to raw data
-- **Explainer Generator**: Creates natural language justifications using Claude AI
 
 ### Data Flow
 
