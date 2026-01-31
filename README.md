@@ -41,17 +41,29 @@ RealTech-Hackathon is an intelligent property recommendation system that leverag
 
 ```mermaid
 flowchart TD
-    User[User Request] --&gt; Orchestrator[Layer 2: AI Orchestrator
-Claude]
-    Orchestrator --&gt; Directives[Layer 1: Directives
-Markdown SOPs]
-    Orchestrator --&gt; Execution[Layer 3: Execution Scripts
-Python]
-    Execution --&gt; ExternalAPIs[External APIs
-ScanSan, TfL, Crime]
-    Execution --&gt; Cache[(Redis Cache)]
-    Orchestrator --&gt; Output[Ranked Recommendations
-&amp; Video Explainers]
+    User --&gt; Orchestrator
+    Orchestrator --&gt; Directives
+    Orchestrator --&gt; Execution
+    Execution --&gt; ExternalAPIs
+    Execution --&gt; Cache
+    Orchestrator --&gt; Output
+
+    subgraph Layer2 [Orchestrator]
+    Orchestrator[AI Orchestrator - Claude]
+    end
+
+    subgraph Layer1 [Directives]
+    Directives[Markdown SOPs]
+    end
+
+    subgraph Layer3 [Execution]
+    Execution[Python Scripts]
+    end
+
+    subgraph External [Data Sources]
+    ExternalAPIs[ScanSan, TfL, Crime]
+    Cache[(Redis Cache)]
+    end
 ```
 
 The system follows a modular 3-layer design where the AI Orchestrator (Claude) reads high-level Markdown SOPs to determine which Python execution scripts to trigger. These scripts interact with external APIs and a Redis cache to return structured data for final ranking and synthesis.
