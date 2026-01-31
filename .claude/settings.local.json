@@ -15,7 +15,8 @@
       "Bash(python tools/fetch_scansan.py:*)",
       "Bash(python tools/fetch_tfl_commute.py:*)",
       "Bash(python tools/fetch_crime_data.py:*)",
-      "Bash(python tools/generate_text_explanation.py:*)"
+      "Bash(python tools/generate_text_explanation.py:*)",
+      "Bash(python demo_pipeline.py:*)"
     ]
   }
 }
