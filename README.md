@@ -1,23 +1,22 @@
 # RealTech-Hackathon
-> AI-powered property recommendation engine with intelligent orchestration and multi-source data enrichment
+&gt; AI-powered property recommendation engine with intelligent orchestration and multi-source data enrichment.
 
 ![Build Status](https://img.shields.io/badge/build-passing-brightgreen)
 ![Python](https://img.shields.io/badge/python-3.9%2B-blue)
 ![License](https://img.shields.io/badge/license-MIT-blue)
 
 ## Description
-RealTech-Hackathon is an intelligent property recommendation system that leverages a 3-layer AI orchestration architecture to generate highly personalised area recommendations for London property seekers. The platform synthesises live data from property intelligence, transport, crime statistics, and education ratings to provide clear, data-driven justifications for every recommendation.
-
-The project is built on the **BLAST (Blueprint, Logic, Architecture, Scripts, Tools)** protocol, ensuring a robust and self-annealing system that can adapt to changing user needs and API environments.
+RealTech-Hackathon is an intelligent property recommendation system that leverages a 3-layer AI orchestration architecture to generate highly personalised area recommendations for London property seekers. The platform synthesises live data from property intelligence, transport, crime statistics, and education ratings to provide clear, data-driven justifications for every recommendation. It targets students, parents, and property developers looking for data-backed location insights.
 
 ## Table of Contents
 - [Features](#features)
 - [Tech Stack](#tech-stack)
 - [Architecture Overview](#architecture-overview)
-- [File Structure](#file-structure)
 - [Installation](#installation)
 - [Usage](#usage)
 - [Configuration](#configuration)
+- [Screenshots / Demo](#screenshots--demo)
+- [API / CLI Reference](#api--cli-reference)
 - [Tests](#tests)
 - [Roadmap](#roadmap)
 - [Contributing](#contributing)
@@ -25,85 +24,119 @@ The project is built on the **BLAST (Blueprint, Logic, Architecture, Scripts, To
 - [Contact](#contact)
 
 ## Features
-- **3-Layer Orchestration**: Decoupled architecture separating high-level directives from deterministic execution scripts.
-- **Persona-Driven Intelligence**: Tailored recommendations for students, parents, and property developers.
-- **Multi-Source Enrichment**: Integrates ScanSan property scores, TfL commute times, UK crime data, and Ofsted ratings.
-- **AI-Powered Video Explainers**: Generates narration-ready scripts and video assets for top area recommendations.
-- **Self-Annealing Error Handling**: Orchestration layer that diagnoses and fixes API failures automatically.
-- **Intelligent Scoring**: Weighted ranking engine based on user-defined priorities (budget, commute, safety, amenities).
+- **3-Layer AI Orchestration**: Decouples directive-based logic (Layer 1) from intelligent routing (Layer 2) and deterministic execution (Layer 3).
+- **Persona-Driven Scoring**: Tailored ranking algorithms for specific lifestyle profiles (e.g., Student, Parent, Developer).
+- **Multi-Source Enrichment**: Integrates ScanSan, TfL Unified API, UK Police Data, and Ofsted ratings.
+- **AI-Powered Explanations**: Generates natural language justifications for every area recommendation.
+- **Self-Annealing Error Handling**: Automatically diagnoses and fixes API-related failures within the orchestration layer.
 
 ## Tech Stack
-- **Core**: Python 3.9+, Anthropic Claude API (Orchestration & Explanation)
-- **Data Processing**: Pandas, NumPy, aiohttp (Async concurrency)
-- **API Clients**: ScanSan Property Intelligence, TfL Unified API, UK Police Data API
-- **Infrastructure**: Redis (Caching), structlog (Structured logging)
-- **Environment**: python-dotenv for secret management
+- **Backend**: Python 3.9+, Anthropic Claude API (Orchestration & NLG)
+- **Frontend**: Next.js (React), TypeScript, Tailwind CSS
+- **Data Pipeline**: Pandas, NumPy, aiohttp (Async I/O)
+- **Cache & Infra**: Redis, structlog, python-dotenv
+- **External Services**: ScanSan API, TfL API, UK Police Data API
 
 ## Architecture Overview
-The system follows a modular 3-layer design:
-
-1.  **Layer 1: Directives (SOPs)**: Markdown-based Standard Operating Procedures that define how to process requests and fetch data.
-2.  **Layer 2: Orchestration (Intelligence)**: An AI-powered decision-making layer (Claude) that reads directives and routes tasks.
-3.  **Layer 3: Execution (Deterministic)**: Python scripts and tools that perform specific API calls and data processing.
 
 ```mermaid
 flowchart TD
-    User[User Request] --> Orchestrator[Layer 2: AI Orchestrator
-Claude]
-    Orchestrator --> Directives[Layer 1: Directives
-Markdown SOPs]
-    Orchestrator --> Execution[Layer 3: Execution Scripts
-Python]
-    Execution --> ExternalAPIs[External APIs
-ScanSan, TfL, Crime]
-    Execution --> Cache[(Redis Cache)]
-    Orchestrator --> Output[Ranked Recommendations
-& Video Explainers]
+    User --&gt; Orchestrator
+    Orchestrator --&gt; Directives
+    Orchestrator --&gt; Execution
+    Execution --&gt; ExternalAPIs
+    Execution --&gt; Cache
+    Orchestrator --&gt; Output
+
+    subgraph Layer2 [Orchestrator]
+    Orchestrator[AI Orchestrator - Claude]
+    end
+
+    subgraph Layer1 [Directives]
+    Directives[Markdown SOPs]
+    end
+
+    subgraph Layer3 [Execution]
+    Execution[Python Scripts]
+    end
+
+    subgraph External [Data Sources]
+    ExternalAPIs[ScanSan, TfL, Crime]
+    Cache[(Redis Cache)]
+    end
 ```
 
-## File Structure
-- `directives/`: Markdown SOPs for schools, safety, amenities, and video generation.
-- `execution/`: Deterministic Python scripts for API interaction and scoring.
-- `tools/`: Core utilities for cache management and API verification.
-- `MASTER_ORCHESTRATION.md`: The primary directive for the AI orchestration layer.
-- `ARCHITECTURE.md`: Detailed system architecture documentation.
-- `scansan_api.py`: Client for the ScanSan Property Intelligence API.
+The system follows a modular 3-layer design where the AI Orchestrator (Claude) reads high-level Markdown SOPs to determine which Python execution scripts to trigger. These scripts interact with external APIs and a Redis cache to return structured data for final ranking and synthesis.
 
 ## Installation
-1. Clone the repository:
+### Prerequisites
+- Python 3.9+
+- Node.js 18+ (for frontend)
+- Redis server
+
+### Step-by-Step Setup
+1. **Clone the repository**:
    ```bash
    git clone https://github.com/younis-y/RealTech-Hackathon.git
    cd RealTech-Hackathon
    ```
-2. Install dependencies:
+
+2. **Backend Setup**:
    ```bash
+   # Create virtual environment
+   python -m venv venv
+   source venv/bin/activate  # venv\Scripts\activate on Windows
+   # Install dependencies
    pip install -r requirements.txt
    ```
-3. Set up environment variables:
+
+3. **Frontend Setup**:
    ```bash
-   cp .env.template .env
-   # Add your API keys to .env
+   cd frontend
+   npm install
    ```
 
 ## Usage
-To fetch area intelligence:
+### CLI Demo
+To run the full recommendation pipeline via the CLI:
 ```bash
-python scansan_api.py E1 SW1A
+python demo_pipeline.py --persona student --budget 1200 --destination UCL
 ```
-To run the full recommendation engine (via Layer 2 Orchestration):
+
+### Web Interface
+To start the frontend development server:
 ```bash
-# Example command using the orchestration logic
-python execution/score_and_rank.py --persona student --budget 1000
+cd frontend
+npm run dev
 ```
 
 ## Configuration
-Configure the system via the `.env` file. Key variables:
-- `ANTHROPIC_API_KEY`: Required for orchestration and explanation generation.
-- `SCANSAN_API_KEY`: For property intelligence data.
-- `TFL_API_KEY`: For travel time calculations.
+Create a `.env` file in the root directory based on `.env.template`:
+```ini
+ANTHROPIC_API_KEY=your_key_here
+SCANSAN_API_KEY=your_key_here
+TFL_API_KEY=your_key_here
+REDIS_URL=redis://localhost:6379
+```
+
+## Screenshots / Demo
+&lt;!-- Placeholder for project screenshots --&gt;
+![Dashboard Placeholder](https://via.placeholder.com/800x450?text=RealTech+Hackathon+Dashboard)
+
+*Live Demo: [https://github.com/younis-y/RealTech-Hackathon](https://github.com/younis-y/RealTech-Hackathon)*
+
+## API / CLI Reference
+The system can be used as a CLI tool:
+```bash
+# Basic usage
+python scansan_api.py [AREA_CODE]
+
+# Parameters:
+# AREA_CODE: Postal district (e.g., E1, SW1A, N7)
+```
 
 ## Tests
-Run the test suite using `pytest`:
+Run the backend test suite using pytest:
 ```bash
 pytest
 ```
@@ -115,11 +148,16 @@ pytest
 - [ ] Support for non-narrated static video explainers.
 
 ## Contributing
-Please see `CONTRIBUTING.md` (coming soon) for details on our code of conduct and the process for submitting pull requests.
+1. Fork the repository.
+2. Create a feature branch (`git checkout -b feature/amazing-feature`).
+3. Commit your changes (`git commit -m 'Add amazing feature'`).
+4. Push to the branch (`git push origin feature/amazing-feature`).
+5. Open a Pull Request.
 
 ## License
-This project is licensed under the MIT License - see the `LICENSE` file for details.
+Distributed under the MIT License. See `LICENSE` for more information.
 
 ## Contact
-Maintainer: Younis Y - [GitHub](https://github.com/younis-y)
+Maintainer: **Younis Y**
+GitHub: [younis-y](https://github.com/younis-y)
 Project Link: [https://github.com/younis-y/RealTech-Hackathon](https://github.com/younis-y/RealTech-Hackathon)
