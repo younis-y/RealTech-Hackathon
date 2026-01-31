@@ -1,0 +1,63 @@
+# Environment variables and secrets
+.env
+.env.local
+.env.production
+.env.development
+
+# Temporary files and intermediates
+.tmp/
+*.tmp
+*.cache
+
+# Google OAuth credentials
+credentials.json
+token.json
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+venv/
+env/
+ENV/
+.venv
+
+# Node.js
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.next/
+out/
+build/
+dist/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Logs
+logs/
+*.log
+
+# Database
+*.db
+*.sqlite
+*.sqlite3
+
+# Test coverage
+coverage/
+.nyc_output/
+*.coverage
+htmlcov/
+
+# OS
+Thumbs.db
+.Spotlight-V100
+.Trashes
