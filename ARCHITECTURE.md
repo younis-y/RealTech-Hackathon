@@ -216,7 +216,7 @@ classDiagram
     - **Staging**: Cloud-hosted environment for integration testing with full API access.
     - **Prod**: High-availability environment with auto-scaling and persistent Redis caching.
  
-    - ```mermaid
+```mermaid
 graph TB
     subgraph "Production Environment - Kubernetes Cluster"
         subgraph "Ingress Layer"
@@ -307,7 +307,7 @@ graph TB
 ## Trade-offs & Decisions
 
 - **LLM vs. Hardcoded Logic**: We chose LLM orchestration to allow for flexible, natural language interactions and easier system updates via Markdown, at the cost of slight latency and token expenses.
-- ** পোস্টকোড District vs. Full Postcode**: Data is aggregated at the district level (e.g., E1) to ensure high cache hit rates and comply with data privacy while remaining useful for area-level recommendations.
+- ** Postcode District vs. Full Postcode**: Data is aggregated at the district level (e.g., E1) to ensure high cache hit rates and comply with data privacy while remaining useful for area-level recommendations.
 
 ## Future Improvements
 
