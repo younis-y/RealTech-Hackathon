@@ -81,6 +81,7 @@ Markdown SOPs]
 - **TfL API**: Calculates precise commute times to specific destinations.
 - **UK Police API**: Fetches localized crime statistics and safety ratings.
 - **GIAS/Ofsted**: Provides school performance data and catchment area information.
+- - **Climate & Weather API**: Provides climate data, weather patterns, and environmental quality metrics for area assessment.
 
 ```mermaid
 flowchart LR
