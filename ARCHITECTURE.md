@@ -82,6 +82,63 @@ Markdown SOPs]
 - **UK Police API**: Fetches localized crime statistics and safety ratings.
 - **GIAS/Ofsted**: Provides school performance data and catchment area information.
 
+- ```mermaid
+flowchart LR
+    subgraph "Layer 1: Knowledge Base"
+        DIR[Directives<br/>Markdown SOPs]
+    end
+    
+    subgraph "Layer 2: Orchestration"
+        ORCH[AI Orchestrator<br/>Claude LLM]
+    end
+    
+    subgraph "Layer 3: Execution Workers"
+        SCAN[ScanSan Script]
+        TFL[TfL Script]
+        CRIME[Crime Data Script]
+        SCHOOL[Schools Script]
+        VIDEO[Video Generator]
+    end
+    
+    subgraph "External APIs"
+        API_SCAN[ScanSan API]
+        API_TFL[TfL API]
+        API_POLICE[Police API]
+        API_GIAS[GIAS/Ofsted]
+        API_VIDEO[Video AI]
+    end
+    
+    CACHE[(Redis Cache)]
+    
+    UI[User Interface] -->|Request + Persona| ORCH
+    ORCH -->|Read Rules| DIR
+    
+    ORCH -->|Invoke| SCAN
+    ORCH -->|Invoke| TFL
+    ORCH -->|Invoke| CRIME
+    ORCH -->|Invoke| SCHOOL
+    ORCH -->|Invoke| VIDEO
+    
+    SCAN <-->|Check/Store| CACHE
+    TFL <-->|Check/Store| CACHE
+    CRIME <-->|Check/Store| CACHE
+    SCHOOL <-->|Check/Store| CACHE
+    
+    SCAN -->|Fetch Data| API_SCAN
+    TFL -->|Fetch Data| API_TFL
+    CRIME -->|Fetch Data| API_POLICE
+    SCHOOL -->|Fetch Data| API_GIAS
+    VIDEO -->|Generate| API_VIDEO
+    
+    SCAN -->|Return JSON| ORCH
+    TFL -->|Return JSON| ORCH
+    CRIME -->|Return JSON| ORCH
+    SCHOOL -->|Return JSON| ORCH
+    VIDEO -->|Return Video URL| ORCH
+    
+    ORCH -->|Synthesize<br/>& Rank| UI
+```
+
 ## Data Flow
 
 ### Typical Recommendation Flow
@@ -117,6 +174,39 @@ The system primarily handles structured JSON data objects:
 - **AreaProfile**: Contains aggregated scores (Safety, Affordability, Commute) and raw metadata for a specific postcode district.
 - **PersonaDefinition**: A configuration object defining the importance (weights) of different metrics for a specific user type.
 - **RecommendationSet**: A ranked collection of AreaProfiles with generated narrative explanations.
+- 
+```mermaid
+classDiagram
+    class AreaProfile {
+        +String postcodeDistrict
+        +Float safetyScore
+        +Float affordabilityScore
+        +Float commuteScore
+        +Float schoolScore
+        +Map~String,Any~ rawMetadata
+        +Float overallScore
+    }
+    
+    class PersonaDefinition {
+        +String personaType
+        +Float safetyWeight
+        +Float affordabilityWeight
+        +Float commuteWeight
+        +Float schoolWeight
+        +Map~String,Any~ preferences
+    }
+    
+    class RecommendationSet {
+        +List~AreaProfile~ rankedAreas
+        +String narrativeExplanation
+        +DateTime generatedAt
+        +PersonaDefinition persona
+        +getTopN(n)
+    }
+    
+    RecommendationSet "1" --> "*" AreaProfile : contains
+    RecommendationSet "1" --> "1" PersonaDefinition : based on
+```
 
 ## Infrastructure & Deployment
 
@@ -125,6 +215,77 @@ The system primarily handles structured JSON data objects:
     - **Dev**: Local environment using `.env` files and local Redis.
     - **Staging**: Cloud-hosted environment for integration testing with full API access.
     - **Prod**: High-availability environment with auto-scaling and persistent Redis caching.
+ 
+    - ```mermaid
+graph TB
+    subgraph "Production Environment - Kubernetes Cluster"
+        subgraph "Ingress Layer"
+            LB[Load Balancer]
+        end
+        
+        subgraph "Application Layer"
+            API1[API Pod 1<br/>Orchestrator + FastAPI]
+            API2[API Pod 2<br/>Orchestrator + FastAPI]
+            API3[API Pod 3<br/>Orchestrator + FastAPI]
+        end
+        
+        subgraph "Worker Layer"
+            W1[Worker Pod 1<br/>Execution Scripts]
+            W2[Worker Pod 2<br/>Execution Scripts]
+        end
+        
+        subgraph "Cache Layer"
+            Redis[(Redis<br/>Persistent Volume)]
+        end
+        
+        subgraph "Config"
+            Secrets[Secret Manager<br/>API Keys]
+            ConfigMaps[ConfigMaps<br/>Directives]
+        end
+    end
+    
+    subgraph "External Services"
+        ScanSan[ScanSan API]
+        TfL[TfL API]
+        Police[UK Police API]
+        Ofsted[GIAS/Ofsted API]
+        Claude[Anthropic Claude]
+        Video[Video AI Services]
+    end
+    
+    Users[Users] --> LB
+    LB --> API1
+    LB --> API2
+    LB --> API3
+    
+    API1 --> W1
+    API2 --> W2
+    API3 --> W1
+    
+    API1 --> Redis
+    API2 --> Redis
+    API3 --> Redis
+    
+    W1 --> ScanSan
+    W1 --> TfL
+    W1 --> Police
+    W2 --> Ofsted
+    W2 --> Video
+    
+    API1 --> Claude
+    API2 --> Claude
+    API3 --> Claude
+    
+    API1 -.-> Secrets
+    API2 -.-> Secrets
+    API3 -.-> Secrets
+    W1 -.-> Secrets
+    W2 -.-> Secrets
+    
+    API1 -.-> ConfigMaps
+    API2 -.-> ConfigMaps
+    API3 -.-> ConfigMaps
+```
 
 ## Scalability & Reliability
 
