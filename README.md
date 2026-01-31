@@ -14,6 +14,7 @@ Veo is an intelligent property recommendation system that helps users find the p
 - **Students** seeking affordable areas with good transport links to universities.
 - **Parents** prioritizing school quality, safety, and family-friendly neighborhoods.
 - **Property Developers** looking for investment opportunities with high ROI potential.
+- **Climate warrior** seeking eco-friendly neighborhoods with green spaces and sustainable living options.
 
 ## Table of Contents
 - [Features](#features)
@@ -47,15 +48,9 @@ Veo is an intelligent property recommendation system that helps users find the p
 
 ## Architecture Overview
 
-```mermaid
-flowchart TD
-    User([User]) --&gt; Frontend[Next.js Web App]
-    Frontend --&gt; Orchestrator[AI Orchestrator - Claude]
-    Orchestrator --&gt; Directives[Layer 1: Directives - Markdown SOPs]
-    Orchestrator --&gt; Execution[Layer 3: Execution Scripts - Python]
-    Execution --&gt; APIs[External APIs - ScanSan, TfL, Crime]
-    Execution --&gt; Cache[(Redis Cache)]
-```
+<img width="1017" height="670" alt="image" src="https://github.com/user-attachments/assets/08b83d8b-521b-4af1-99a7-ce8e35439e50" />
+
+
 
 The system follows a modular 3-layer architecture where the **AI Orchestrator (Claude)** reads high-level **Directives** (Markdown SOPs) to determine which deterministic **Execution Scripts** (Python) to trigger. This approach ensures that business logic remains flexible while data processing remains reliable and fast.
 
