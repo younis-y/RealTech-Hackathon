@@ -38,6 +38,7 @@ The project is built on the **BLAST (Blueprint, Logic, Architecture, Scripts, To
 - **API Clients**: ScanSan Property Intelligence, TfL Unified API, UK Police Data API
 - **Infrastructure**: Redis (Caching), structlog (Structured logging)
 - **Environment**: python-dotenv for secret management
+- - **Frontend**: Next.js (React framework), TypeScript, Tailwind CSS
 
 ## Architecture Overview
 The system follows a modular 3-layer design:
@@ -68,6 +69,7 @@ ScanSan, TfL, Crime]
 - `MASTER_ORCHESTRATION.md`: The primary directive for the AI orchestration layer.
 - `ARCHITECTURE.md`: Detailed system architecture documentation.
 - `scansan_api.py`: Client for the ScanSan Property Intelligence API.
+- - `frontend/`: Next.js web interface for interactive area comparison and visualization.
 
 ## Installation
 1. Clone the repository:
