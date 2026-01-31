@@ -82,7 +82,7 @@ Markdown SOPs]
 - **UK Police API**: Fetches localized crime statistics and safety ratings.
 - **GIAS/Ofsted**: Provides school performance data and catchment area information.
 
-- ```mermaid
+```mermaid
 flowchart LR
     subgraph "Layer 1: Knowledge Base"
         DIR[Directives<br/>Markdown SOPs]
@@ -174,7 +174,7 @@ The system primarily handles structured JSON data objects:
 - **AreaProfile**: Contains aggregated scores (Safety, Affordability, Commute) and raw metadata for a specific postcode district.
 - **PersonaDefinition**: A configuration object defining the importance (weights) of different metrics for a specific user type.
 - **RecommendationSet**: A ranked collection of AreaProfiles with generated narrative explanations.
-- 
+
 ```mermaid
 classDiagram
     class AreaProfile {
@@ -220,7 +220,7 @@ classDiagram
 graph TB
     subgraph "Production Environment - Kubernetes Cluster"
         subgraph "Ingress Layer"
-            LB[Load Balancer]
+            
         end
         
         subgraph "Application Layer"
