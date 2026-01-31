@@ -11,7 +11,11 @@
       "Bash(git checkout:*)",
       "Bash(git commit:*)",
       "Bash(pip install:*)",
-      "Bash(python tools/verify_apis.py:*)"
+      "Bash(python tools/verify_apis.py:*)",
+      "Bash(python tools/fetch_scansan.py:*)",
+      "Bash(python tools/fetch_tfl_commute.py:*)",
+      "Bash(python tools/fetch_crime_data.py:*)",
+      "Bash(python tools/generate_text_explanation.py:*)"
     ]
   }
 }
