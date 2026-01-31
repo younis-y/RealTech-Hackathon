@@ -48,6 +48,49 @@ Veo is an intelligent property recommendation system that helps users find the p
 
 ## Architecture Overview
 
+```mermaid
+graph TB
+    User["👤 User Interface/API"] --> Orchestrator["🧠 Layer 2: AI Orchestrator<br/>(Claude LLM)"]
+    Orchestrator --> Directives["📋 Layer 1: Directives<br/>(Markdown SOPs)"]
+    Orchestrator --> ScanSan["🏘️ ScanSan Script"]
+    Orchestrator --> TfL["🚇 TfL Script"]
+    Orchestrator --> Crime["🚔 Crime Data Script"]
+    Orchestrator --> Schools["🏫 Schools Script"]
+    Orchestrator --> Video["🎬 Video Generator"]
+    
+    ScanSan --> ScanSanAPI["ScanSan Property API"]
+    TfL --> TfLAPI["TfL Unified API"]
+    Crime --> PoliceAPI["UK Police Data API"]
+    Schools --> GIAS["GIAS/Ofsted API"]
+    Video --> VideoAI["Veo/Sora/LTX API"]
+    
+    ScanSan --> Cache["⚡ Redis Cache"]
+    TfL --> Cache
+    Crime --> Cache
+    Schools --> Cache
+    
+    style User fill:#e1f5ff
+    style Orchestrator fill:#fff4e1
+    style Directives fill:#f0f0f0
+    style Cache fill:#ffe1e1
+    
+    subgraph "Layer 3: Execution Workers"
+        ScanSan
+        TfL
+        Crime
+        Schools
+        Video
+    end
+    
+    subgraph "External APIs"
+        ScanSanAPI
+        TfLAPI
+        PoliceAPI
+        GIAS
+        VideoAI
+    end
+```
+
 ****
 ****
 ****
