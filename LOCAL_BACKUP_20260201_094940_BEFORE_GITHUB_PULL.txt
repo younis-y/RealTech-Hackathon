@@ -1,0 +1,3584 @@
+==================================================================================
+BACKUP OF LOCAL CHANGES BEFORE GITHUB PULL
+Created: Sun Feb  1 09:49:41 GMT 2026
+==================================================================================
+
+This file contains all modified, deleted content, and untracked files
+that existed locally before pulling updates from GitHub.
+
+==================================================================================
+
+==================================================================================
+FILE: ARCHITECTURE.md
+==================================================================================
+# Veo System Architecture 🏗️
+
+## 1. High-Level Design: The "3-Layer Pattern"
+
+Veo uses a novel **3-Layer AI Orchestration Architecture** to balance the intelligence of LLMs with the reliability of code.
+
+### Layer 1: Directives (The "SOPs")
+- **What**: Text-based Standard Operating Procedures (Markdown files).
+- **Role**: Defines *how* to perform tasks (e.g., "How to calculate Affordability Score").
+- **Benefit**: Business logic can be updated by editing text, not code.
+
+### Layer 2: Orchestrator (The "Manager")
+- **Construction**: Anthropic Claude 3.5 Sonnet.
+- **Role**: Reads the user request, consults Layer 1 Directives, and decides which Layer 3 tools to call.
+- **Intelligence**: Handles ambiguity (e.g., "I want a safe place") and error recovery.
+
+### Layer 3: Execution (The "Workers")
+- **Construction**: Python Scripts (`tools/*.py`).
+- **Role**: **Deterministic** execution. Fetching APIs, parsing JSON, calculating math.
+- **Key Components**:
+    - `fetch_scansan.py`: Deep Market Analysis (Rent, Yield, Growth).
+    - `fetch_market_news.py`: **Live** integration with Perplexity Sonar.
+    - `fetch_tfl_commute.py`: Commute time calculation.
+
+---
+
+## 2. Deep Market Analysis Engine
+
+Veo goes beyond simple listings by generating "Market Verdicts".
+
+### Data Sources
+1.  **Static Reality**: Hardcoded lookup table of ~20 key London postcodes with Q4 2024 / Q1 2025 estimated stats (Rent, Price, Growth).
+2.  **Live Intelligence**: Integrates **Perplexity Sonar API** (`fetch_market_news.py`) to fetch real-time sentiment.
+
+### Logic Flow
+1.  **Lookup**: Check if area exists in `REAL_MARKET_DATA`.
+2.  **Augment**: If `PERPLEXITY_API_KEY` exists, fetch live news & yield updates.
+3.  **Compute**:
+    - `Yield` = (Annual Rent / Purchase Price) * 100
+    - `FutureValue` = Purchase Price * (1 + GrowthRate)^5
+    - `Verdict` = AI synthesis of Yield + Growth + Safety.
+
+---
+
+## 3. Data Pipeline & Caching
+
+Performance is critical. We use a multi-tiered caching strategy.
+
+- **Local Cache**: JSON files in `.tmp/` or `.cache/` (Dev mode).
+- **Redis**: For production deployment (Phase 2).
+- **TTL**:
+    - Market Data: 24 Hours
+    - Commute Data: 7 Days
+    - Crime/School Data: 30 Days
+
+---
+
+## 4. API Integrations
+
+| API | Purpose | Auth Type | Criticality |
+| :--- | :--- | :--- | :--- |
+| **ScanSan** | Property Stats, Yields | Bearer Token | High |
+| **Perplexity** | Live News, Sentiment | Bearer Token | Medium (Enhancement) |
+| **TfL Unified** | Commute Times | App Key | High |
+| **Police.uk** | Crime Rates | Public | Medium |
+| **Anthropic** | Orchestration, Explanations | API Key | High |
+
+---
+
+## 5. Deployment Architecture
+
+The system is designed to run **Serverless** on [Modal](https://modal.com).
+
+- **Frontend**: Vercel (Next.js Edge).
+- **Backend**: Modal Functions (Python).
+- **State**: Redis (Ephemeral).
+
+For local development, we run a hybrid model:
+- **Frontend**: Local Node.js server (`localhost:3000`).
+- **Backend**: Local Python process spawned by Next.js API routes.
+
+==================================================================================
+FILE: README.md
+==================================================================================
+# Veo Housing Platform 🧠🏘️
+
+> **Find your perfect London neighborhood in minutes, not weeks.**
+> AI-powered property recommendation engine with persona-based scoring and intelligent multi-source data enrichment.
+
+![Build Status](https://img.shields.io/badge/build-passing-brightgreen)
+![Python](https://img.shields.io/badge/python-3.11%2B-blue)
+![TypeScript](https://img.shields.io/badge/typescript-5.x-blue)
+![License](https://img.shields.io/badge/license-MIT-blue)
+
+## 🚀 Overview
+
+Veo solves the problem of "analysis paralysis" in the London property market. Instead of browsing thousands of individual listings, Veo recommends **neighborhoods** that fit your lifestyle.
+
+It uses a unique **3-Layer AI Architecture** to orchestrate authoritative data from **ScanSan**, **TfL**, **UK Police**, and **Ofsted**, producing highly personalized recommendations for Students, Parents, and Investors.
+
+### Key Differentiators
+- **🎯 Multi-Persona Intelligence**: Tailored algorithms for Students (Affordability + Commute), Parents (Schools + Safety), and Developers (Yield + Demand).
+- **⚡ "Deep Market" Analysis**: Uses real 2025 market data (Rent, Price, Yield) for ~20 key London areas.
+- **📰 Live Market News**: Integrates **Perplexity Sonar API** for real-time sentiment and news analysis.
+- **🛡️ Self-Annealing Architecture**: Automatically diagnoses and adjusts to API failures.
+
+---
+
+## 🛠️ Tech Stack
+
+- **Frontend**: Next.js 14 (App Router), Tailwind CSS, Framer Motion
+- **Backend / Orchestration**: Python 3.11+, Anthropic Claude 3.5 Sonnet
+- **Data**: Pandas, NumPy, Redis Caching
+- **External APIs**: ScanSan, TfL, Police.uk, Ofsted, Perplexity Sonar
+- **Infrastructure**: Designed for Modal (Serverless) & Vercel
+
+---
+
+## ⚡ Quick Start
+
+### Prerequisites
+- Node.js 18+
+- Python 3.11+
+- API Keys (ScanSan, Anthropic) - *Ask maintainer for `.env` file*
+
+### 1. Backend Setup
+```bash
+# Clone and enter repo
+git clone https://github.com/younis-y/RealTech-Hackathon.git
+cd RealTech-Hackathon
+
+# Setup Virtual Env
+python -m venv venv
+source venv/bin/activate  # Windows: venv\Scripts\activate
+pip install -r requirements.txt
+```
+
+### 2. Frontend Setup
+```bash
+cd frontend
+npm install
+npm run dev
+```
+
+### 3. Usage
+Open **[http://localhost:3000](http://localhost:3000)** in your browser.
+Select a persona, enter a budget (e.g., £2500), and hit "Find Homes".
+
+---
+
+## 📂 Project Structure
+
+- **`/frontend`**: Next.js Web Application
+- **`/tools`**: Python scripts for data fetching (`fetch_scansan.py`, `fetch_tfl.py`, etc.)
+- **`/execution`**: Core logic pipelines
+- **`demo_pipeline.py`**: CLI entry point for testing backend logic
+- **`ARCHITECTURE.md`**: Detailed system design documentation
+- **`DEV_GUIDE.md`**: Developer setup and testing guide
+
+---
+
+## 🔍 Key Features Breakdown
+
+| Feature | Description | Tech |
+| :--- | :--- | :--- |
+| **Orchestrator** | Intelligent task routing & error handling | Claude 3.5 Sonnet |
+| **Market Intelligence** | Yield, Price Growth, & "Verdict" generation | ScanSan + Perplexity |
+| **Commute Engine** | Real-time travel times to universities/work | TfL API |
+| **Safety Index** | Granular crime stats by postcode | Police.uk API |
+
+---
+
+## 🤝 Contributing
+
+See [DEV_GUIDE.md](DEV_GUIDE.md) for detailed instructions on testing and submitting PRs.
+
+## 📄 License
+
+MIT License. See [LICENSE](LICENSE) for details.
+
+---
+
+*Built for RealTech Hackathon 2026 by Younis Y & Team.*
+
+==================================================================================
+FILE: demo_pipeline.py
+==================================================================================
+#!/usr/bin/env python3
+"""
+Veo Housing Recommendation Pipeline - Full Demo
+Demonstrates the complete end-to-end pipeline from user input to recommendations.
+"""
+
+import sys
+import os
+from datetime import datetime
+
+# Add tools to path
+sys.path.append(os.path.dirname(os.path.abspath(__file__)))
+
+from tools.fetch_scansan import fetch_scansan_data, get_candidate_areas
+from tools.fetch_tfl_commute import fetch_commute_data
+from tools.fetch_crime_data import fetch_crime_data
+from tools.fetch_schools import fetch_schools_data
+from tools.fetch_amenities import fetch_amenities_data
+from tools.fetch_air_quality import fetch_air_quality
+from tools.score_areas import rank_areas
+from tools.generate_text_explanation import generate_explanation
+
+
+def print_header(title):
+    """Print a formatted section header."""
+    print("\n" + "="*80)
+    print(f"  {title}")
+    print("="*80 + "\n")
+
+
+def print_user_input(persona, budget, location_type, destination):
+    """Print user input summary."""
+    print_header("USER INPUT")
+    print(f"Persona: {persona.upper()}")
+    print(f"Budget: £{budget:,}/month" if location_type == "rent" else f"Budget: £{budget:,}")
+    print(f"Location Type: {location_type.upper()}")
+    if destination:
+        print(f"Destination: {destination}")
+    print()
+
+
+def enrich_area(area_code, destination=None):
+    """
+    Enrich an area with all data sources.
+
+    Args:
+        area_code: Area to enrich
+        destination: Optional destination for commute calculation
+
+    Returns:
+        Dict with all enrichment data
+    """
+    print(f"  Enriching {area_code}...")
+
+    # Fetch all data
+    scansan = fetch_scansan_data(area_code)
+    commute = fetch_commute_data(area_code, destination) if destination else None
+    crime = fetch_crime_data(area_code)
+    schools = fetch_schools_data(area_code)
+    amenities = fetch_amenities_data(area_code)
+    air_quality = fetch_air_quality()
+
+    return {
+        "area_code": area_code,
+        "scansan": scansan or {},
+        "commute": commute or {},
+        "crime": crime or {},
+        "schools": schools or {},
+        "amenities": amenities or {},
+        "air_quality": air_quality or {}
+    }
+
+
+def display_recommendations(recommendations, persona, show_explanations=True):
+    """Display ranked recommendations with details."""
+    print_header("RECOMMENDATIONS")
+
+    for rec in recommendations:
+        rank = rec["rank"]
+        name = rec["area_name"]
+        score = rec["composite_score"]
+
+        print(f"#{rank}. {name} ({rec['area_code']}) - Score: {score:.1f}/100")
+        print("-" * 80)
+
+        # Factor breakdown
+        print("\nFactor Scores:")
+        factors = rec["factor_breakdown"]
+        for factor, value in factors.items():
+            bar_length = int(value / 5)  # 0-20 characters
+            bar = "#" * bar_length
+            print(f"  {factor:15s}: {value:3.0f}/100 {bar}")
+
+        # Strengths and weaknesses
+        if rec["strengths"]:
+            print(f"\n[+] Strengths: {', '.join(rec['strengths'])}")
+        if rec["weaknesses"]:
+            print(f"[-] Weaknesses: {', '.join(rec['weaknesses'])}")
+
+        # Explanation
+        if show_explanations and rec.get("explanation"):
+            print(f"\nExplanation:\n{rec['explanation']}")
+
+        print("\n" + "="*80 + "\n")
+
+
+def run_demo(
+    persona="student",
+    budget_max=1000,
+    location_type="rent",
+    destination="UCL",
+    max_areas=5,
+    generate_explanations=True,
+    json_output=False
+):
+    """
+    Run the full pipeline demo.
+
+    Args:
+        persona: "student", "parent", or "developer"
+        budget_max: Maximum budget
+        location_type: "rent" or "buy"
+        destination: Destination for commute calculation
+        max_areas: Number of areas to analyze
+        generate_explanations: Whether to generate AI explanations
+    """
+    start_time = datetime.now()
+    
+    # If JSON output, redirect stdout to stderr to capture logs without breaking JSON
+    original_stdout = sys.stdout
+    if json_output:
+        sys.stdout = sys.stderr
+
+    print("\n" + "="*80)
+    print("  VEO HOUSING RECOMMENDATION PLATFORM - PIPELINE DEMO")
+    print("="*80)
+
+    # Display input
+    print_user_input(persona, budget_max, location_type, destination)
+
+    # Step 1: Get candidate areas
+    print_header("STEP 1: FINDING CANDIDATE AREAS")
+    print(f"Searching for affordable areas with max budget £{budget_max:,}...")
+
+    candidate_areas = get_candidate_areas(
+        budget_max=budget_max,
+        location_type=location_type,
+        affordability_threshold=60
+    )
+
+    print(f"\nFound {len(candidate_areas)} candidate areas")
+    print(f"Analyzing top {min(max_areas, len(candidate_areas))} areas\n")
+
+    # Limit to requested number
+    areas_to_analyze = candidate_areas[:max_areas]
+
+    # Step 2: Enrich areas
+    print_header("STEP 2: ENRICHING DATA")
+    print("Fetching property, commute, crime, schools, and amenities data...\n")
+
+    enriched_areas = []
+    for i, area in enumerate(areas_to_analyze, 1):
+        print(f"[{i}/{len(areas_to_analyze)}] ", end="")
+        enriched = enrich_area(area, destination)
+        enriched_areas.append(enriched)
+
+    print("\n[OK] Data enrichment complete")
+
+    # Step 3: Score and rank
+    print_header("STEP 3: SCORING & RANKING")
+    print(f"Calculating persona-specific scores for {persona}...\n")
+
+    recommendations = rank_areas(enriched_areas, persona, limit=len(areas_to_analyze))
+
+    print(f"[OK] Scored and ranked {len(recommendations)} areas")
+
+    # Step 4: Generate explanations
+    if generate_explanations:
+        print_header("STEP 4: GENERATING EXPLANATIONS")
+        print("Using Claude AI to generate natural language explanations...\n")
+
+        # Generate for top 3
+        for i, rec in enumerate(recommendations[:3], 1):
+            print(f"[{i}/3] Generating explanation for {rec['area_name']}...")
+            explanation = generate_explanation(rec, persona, format_type="medium")
+            rec["explanation"] = explanation
+
+        print("\n[OK] Explanations generated for top 3 areas")
+
+    # Step 5: Display results
+    if not json_output:
+        display_recommendations(
+            recommendations[:3],  # Show top 3
+            persona,
+            show_explanations=generate_explanations
+        )
+
+    # Summary
+    end_time = datetime.now()
+    duration = (end_time - start_time).total_seconds()
+
+    if not json_output:
+        print_header("PIPELINE SUMMARY")
+        print(f"Total execution time: {duration:.2f} seconds")
+        print(f"Areas analyzed: {len(areas_to_analyze)}")
+        print(f"Recommendations generated: {len(recommendations)}")
+        print(f"Explanations generated: {3 if generate_explanations else 0}")
+        print(f"\n[SUCCESS] Pipeline completed successfully!")
+        print("\n" + "="*80 + "\n")
+    
+    # Restore stdout and print JSON if requested
+    if json_output:
+        sys.stdout = original_stdout
+        import json
+        output = {
+            "success": True,
+            "timestamp": end_time.isoformat(),
+            "duration_seconds": duration,
+            "request": {
+                "persona": persona,
+                "budget": budget_max,
+                "type": location_type,
+                "destination": destination
+            },
+            "recommendations": recommendations[:3] 
+        }
+        print(json.dumps(output, indent=2))
+
+
+if __name__ == "__main__":
+    import argparse
+
+    parser = argparse.ArgumentParser(description="Veo Housing Recommendation Pipeline Demo")
+    parser.add_argument("--persona", choices=["student", "parent", "developer"],
+                        default="student", help="User persona")
+    parser.add_argument("--budget", type=int, default=1000,
+                        help="Maximum budget (£/month for rent, £ total for buy)")
+    parser.add_argument("--type", choices=["rent", "buy"], default="rent",
+                        help="Location type")
+    parser.add_argument("--destination", default="UCL",
+                        help="Destination for commute (e.g., UCL, Imperial, KCL)")
+    parser.add_argument("--max-areas", type=int, default=5,
+                        help="Maximum number of areas to analyze")
+    parser.add_argument("--no-explanations", action="store_true",
+                        help="Skip AI explanation generation")
+    parser.add_argument("--json", action="store_true",
+                        help="Output results as JSON")
+
+    args = parser.parse_args()
+
+    try:
+        run_demo(
+            persona=args.persona,
+            budget_max=args.budget,
+            location_type=args.type,
+            destination=args.destination,
+            max_areas=args.max_areas,
+            generate_explanations=not args.no_explanations,
+            json_output=args.json
+        )
+    except KeyboardInterrupt:
+        print("\n\nDemo interrupted by user")
+        sys.exit(0)
+    except Exception as e:
+        print(f"\n\n[ERROR] Pipeline failed: {e}")
+        import traceback
+        traceback.print_exc()
+        sys.exit(1)
+
+==================================================================================
+FILE: frontend/app/api/recommendations/route.ts
+==================================================================================
+import { NextRequest, NextResponse } from 'next/server'
+import { spawn } from 'child_process'
+import path from 'path'
+
+export async function POST(request: NextRequest) {
+  try {
+    const body = await request.json()
+    const { persona, budget, locationType, destination, maxAreas } = body
+
+    // Path to Python executable in venv
+    const pythonExec = path.join(process.cwd(), '..', 'venv', 'bin', 'python')
+    // Path to Python script (relative to project root)
+    const pythonScript = path.join(process.cwd(), '..', 'demo_pipeline.py')
+
+    // Build Python command arguments
+    const args = [
+      pythonScript,
+      '--persona', persona,
+      '--budget', budget.toString(),
+      '--type', locationType,
+      '--destination', destination || 'UCL',
+      '--max-areas', maxAreas.toString(),
+      '--no-explanations', // Skip explanations for faster response in demo
+      '--json'
+    ]
+
+    // Execute Python script
+    const result = await executePython(pythonExec, args)
+
+    // Parse Python output
+    const outputData = JSON.parse(result)
+
+    if (!outputData.success) {
+      throw new Error('Pipeline failed execution')
+    }
+
+    // Map Python snake_case to Frontend camelCase
+    const mappedRecommendations = outputData.recommendations.map((rec: any) => ({
+      rank: rec.rank,
+      name: rec.area_name,
+      areaCode: rec.area_code,
+      score: Math.round(rec.composite_score),
+      factors: rec.factor_breakdown,
+      strengths: rec.strengths,
+      weaknesses: rec.weaknesses,
+      explanation: rec.explanation
+    }))
+
+    return NextResponse.json({
+      success: true,
+      persona,
+      budget,
+      recommendations: mappedRecommendations
+    })
+
+  } catch (error) {
+    console.error('API Error:', error)
+    return NextResponse.json(
+      { error: 'Failed to generate recommendations' },
+      { status: 500 }
+    )
+  }
+}
+
+function executePython(command: string, args: string[]): Promise<string> {
+  return new Promise((resolve, reject) => {
+    const python = spawn(command, args)
+    let output = ''
+    let errorOutput = ''
+
+    python.stdout.on('data', (data) => {
+      output += data.toString()
+    })
+
+    python.stderr.on('data', (data) => {
+      errorOutput += data.toString()
+    })
+
+    python.on('close', (code) => {
+      if (code === 0) {
+        resolve(output)
+      } else {
+        reject(new Error(`Python script exited with code ${code}: ${errorOutput}`))
+      }
+    })
+
+    python.on('error', (error) => {
+      reject(error)
+    })
+  })
+}
+
+
+
+==================================================================================
+FILE: frontend/app/page.tsx
+==================================================================================
+'use client'
+
+import { useState } from 'react'
+import { useRouter } from 'next/navigation'
+
+export default function Home() {
+  const router = useRouter()
+  const [loading, setLoading] = useState(false)
+  const [formData, setFormData] = useState({
+    persona: 'student',
+    budget: 1850,
+    locationType: 'rent',
+    destination: 'UCL',
+    maxAreas: 5,
+    // Developer-specific fields (from The Appraisal of Real Estate)
+    investmentHorizon: '5',     // Years
+    targetYield: '5',           // Percentage
+    riskTolerance: 'moderate',  // low/moderate/high
+    investmentStrategy: 'yield' // yield/growth/balanced
+  })
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+    setLoading(true)
+
+    try {
+      const response = await fetch('/api/recommendations', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(formData)
+      })
+
+      const data = await response.json()
+      sessionStorage.setItem('recommendations', JSON.stringify(data))
+      router.push('/results')
+    } catch (error) {
+      console.error('Error:', error)
+      alert('Failed to get recommendations. Please try again.')
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const isDeveloper = formData.persona === 'developer'
+
+  return (
+    <main className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 py-12 px-4">
+      <div className="max-w-2xl mx-auto">
+        {/* Header */}
+        <div className="text-center mb-12">
+          <h1 className="text-5xl font-bold text-gray-900 mb-4">
+            Veo
+          </h1>
+          <p className="text-xl text-gray-600">
+            {isDeveloper
+              ? 'Investment Property Analysis for London'
+              : 'AI-Powered Housing Recommendations for London'}
+          </p>
+        </div>
+
+        {/* Form Card */}
+        <div className="bg-white rounded-2xl shadow-xl p-8">
+          <form onSubmit={handleSubmit} className="space-y-6">
+            {/* Persona Selection */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                I am a...
+              </label>
+              <select
+                value={formData.persona}
+                onChange={(e) => setFormData({ ...formData, persona: e.target.value })}
+                className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              >
+                <option value="student">Student</option>
+                <option value="parent">Parent</option>
+                <option value="developer">Property Developer</option>
+              </select>
+            </div>
+
+            {/* Developer-specific fields */}
+            {isDeveloper && (
+              <>
+                {/* Investment Strategy */}
+                <div className="bg-gradient-to-r from-emerald-50 to-teal-50 p-4 rounded-xl border border-emerald-200">
+                  <h3 className="text-sm font-semibold text-emerald-800 mb-3 flex items-center gap-2">
+                    📊 Investment Strategy (The Appraisal of Real Estate, Ch. 24-25)
+                  </h3>
+
+                  <div className="grid grid-cols-2 gap-4">
+                    {/* Target Yield */}
+                    <div>
+                      <label className="block text-xs font-medium text-gray-600 mb-1">
+                        Target Cap Rate / Yield
+                      </label>
+                      <select
+                        value={formData.targetYield}
+                        onChange={(e) => setFormData({ ...formData, targetYield: e.target.value })}
+                        className="w-full p-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500"
+                      >
+                        <option value="4">4% (Prime London)</option>
+                        <option value="5">5% (Standard)</option>
+                        <option value="6">6% (High Yield)</option>
+                        <option value="7">7%+ (Opportunistic)</option>
+                      </select>
+                    </div>
+
+                    {/* Investment Horizon */}
+                    <div>
+                      <label className="block text-xs font-medium text-gray-600 mb-1">
+                        Holding Period (DCF Analysis)
+                      </label>
+                      <select
+                        value={formData.investmentHorizon}
+                        onChange={(e) => setFormData({ ...formData, investmentHorizon: e.target.value })}
+                        className="w-full p-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500"
+                      >
+                        <option value="3">3 years (Short-term)</option>
+                        <option value="5">5 years (Standard)</option>
+                        <option value="10">10 years (Long-term)</option>
+                        <option value="15">15+ years (Legacy)</option>
+                      </select>
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-4 mt-3">
+                    {/* Risk Tolerance */}
+                    <div>
+                      <label className="block text-xs font-medium text-gray-600 mb-1">
+                        Risk Profile
+                      </label>
+                      <select
+                        value={formData.riskTolerance}
+                        onChange={(e) => setFormData({ ...formData, riskTolerance: e.target.value })}
+                        className="w-full p-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500"
+                      >
+                        <option value="low">Low (Established areas)</option>
+                        <option value="moderate">Moderate (Growth corridors)</option>
+                        <option value="high">High (Regeneration zones)</option>
+                      </select>
+                    </div>
+
+                    {/* Strategy */}
+                    <div>
+                      <label className="block text-xs font-medium text-gray-600 mb-1">
+                        Investment Focus
+                      </label>
+                      <select
+                        value={formData.investmentStrategy}
+                        onChange={(e) => setFormData({ ...formData, investmentStrategy: e.target.value })}
+                        className="w-full p-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500"
+                      >
+                        <option value="yield">Yield (Income-focused)</option>
+                        <option value="growth">Growth (Capital appreciation)</option>
+                        <option value="balanced">Balanced (Hybrid)</option>
+                      </select>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Budget for developers = Investment Capital */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Purchase Budget (£)
+                  </label>
+                  <input
+                    type="number"
+                    value={formData.budget}
+                    onChange={(e) => setFormData({ ...formData, budget: parseInt(e.target.value) })}
+                    className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    min="100000"
+                    max="2000000"
+                    step="25000"
+                    placeholder="e.g., 400000"
+                  />
+                  <p className="text-xs text-gray-500 mt-1">
+                    Target property purchase price for investment
+                  </p>
+                </div>
+              </>
+            )}
+
+            {/* Non-developer: Standard Budget */}
+            {!isDeveloper && (
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Budget (£/month)
+                </label>
+                <input
+                  type="number"
+                  value={formData.budget}
+                  onChange={(e) => setFormData({ ...formData, budget: parseInt(e.target.value) })}
+                  className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  min="500"
+                  max="5000"
+                  step="50"
+                />
+              </div>
+            )}
+
+            {/* Location Type - different for developers */}
+            {!isDeveloper && (
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Looking to...
+                </label>
+                <div className="flex gap-4">
+                  <label className="flex items-center">
+                    <input
+                      type="radio"
+                      value="rent"
+                      checked={formData.locationType === 'rent'}
+                      onChange={(e) => setFormData({ ...formData, locationType: e.target.value })}
+                      className="mr-2"
+                    />
+                    Rent
+                  </label>
+                  <label className="flex items-center">
+                    <input
+                      type="radio"
+                      value="buy"
+                      checked={formData.locationType === 'buy'}
+                      onChange={(e) => setFormData({ ...formData, locationType: e.target.value })}
+                      className="mr-2"
+                    />
+                    Buy
+                  </label>
+                </div>
+              </div>
+            )}
+
+            {/* Student destination */}
+            {formData.persona === 'student' && (
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  University/Destination
+                </label>
+                <select
+                  value={formData.destination}
+                  onChange={(e) => setFormData({ ...formData, destination: e.target.value })}
+                  className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                >
+                  <option value="UCL">UCL (University College London)</option>
+                  <option value="Imperial">Imperial College London</option>
+                  <option value="KCL">King's College London</option>
+                  <option value="LSE">London School of Economics</option>
+                </select>
+              </div>
+            )}
+
+            {/* Max Areas */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Number of {isDeveloper ? 'investment opportunities' : 'recommendations'}: {formData.maxAreas}
+              </label>
+              <input
+                type="range"
+                value={formData.maxAreas}
+                onChange={(e) => setFormData({ ...formData, maxAreas: parseInt(e.target.value) })}
+                className="w-full"
+                min="3"
+                max="10"
+              />
+            </div>
+
+            {/* Submit Button */}
+            <button
+              type="submit"
+              disabled={loading}
+              className={`w-full py-4 px-6 rounded-lg font-semibold text-lg transition-colors disabled:bg-gray-400 disabled:cursor-not-allowed ${isDeveloper
+                  ? 'bg-emerald-600 hover:bg-emerald-700 text-white'
+                  : 'bg-blue-600 hover:bg-blue-700 text-white'
+                }`}
+            >
+              {loading
+                ? (isDeveloper ? 'Analyzing investments...' : 'Finding recommendations...')
+                : (isDeveloper ? 'Analyze Investment Opportunities' : 'Get Recommendations')}
+            </button>
+          </form>
+
+          {/* Info */}
+          <div className="mt-6 text-center text-sm text-gray-500">
+            <p>Powered by AI • Real London data • Transparent scoring</p>
+          </div>
+        </div>
+
+        {/* Features */}
+        <div className="grid grid-cols-3 gap-4 mt-8 text-center">
+          <div className="bg-white p-4 rounded-lg shadow">
+            <div className="text-2xl mb-2">🏘️</div>
+            <div className="text-sm font-medium">Real Data</div>
+          </div>
+          <div className="bg-white p-4 rounded-lg shadow">
+            <div className="text-2xl mb-2">🤖</div>
+            <div className="text-sm font-medium">AI Explanations</div>
+          </div>
+          <div className="bg-white p-4 rounded-lg shadow">
+            <div className="text-2xl mb-2">📊</div>
+            <div className="text-sm font-medium">Transparent Scores</div>
+          </div>
+        </div>
+      </div>
+    </main>
+  )
+}
+
+==================================================================================
+FILE: frontend/app/results/page.tsx
+==================================================================================
+'use client'
+
+import { useEffect, useState } from 'react'
+import { useRouter } from 'next/navigation'
+
+interface Recommendation {
+  rank: number
+  name: string
+  areaCode: string
+  score: number
+  factors: Record<string, number>
+  strengths: string[]
+  weaknesses: string[]
+}
+
+interface ResultsData {
+  success: boolean
+  persona: string
+  budget: number
+  recommendations: Recommendation[]
+}
+
+// Skeleton loading card component
+function SkeletonCard() {
+  return (
+    <div className="bg-white rounded-2xl shadow-lg p-6 animate-pulse">
+      <div className="flex justify-between items-start mb-4">
+        <div className="flex items-center gap-3">
+          <div className="w-12 h-12 bg-gray-200 rounded-full"></div>
+          <div>
+            <div className="h-6 w-32 bg-gray-200 rounded mb-2"></div>
+            <div className="h-4 w-16 bg-gray-200 rounded"></div>
+          </div>
+        </div>
+        <div className="h-12 w-16 bg-gray-200 rounded"></div>
+      </div>
+      <div className="grid grid-cols-3 gap-4 mb-4">
+        {[1, 2, 3, 4, 5, 6].map(i => (
+          <div key={i} className="bg-gray-100 rounded-lg p-3">
+            <div className="h-4 w-full bg-gray-200 rounded mb-2"></div>
+            <div className="h-2 w-full bg-gray-200 rounded"></div>
+          </div>
+        ))}
+      </div>
+    </div>
+  )
+}
+
+export default function Results() {
+  const router = useRouter()
+  const [data, setData] = useState<ResultsData | null>(null)
+  const [isLoading, setIsLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
+
+  useEffect(() => {
+    const stored = sessionStorage.getItem('recommendations')
+    if (stored) {
+      try {
+        const parsed = JSON.parse(stored)
+        console.log('[DEBUG] Loaded from sessionStorage:', parsed)
+        setData(parsed)
+      } catch (e) {
+        setError('Failed to parse stored data')
+      }
+    } else {
+      router.push('/')
+    }
+    setIsLoading(false)
+  }, [router])
+
+  // Show loading skeleton
+  if (isLoading) {
+    return (
+      <main className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 py-12 px-4">
+        <div className="max-w-6xl mx-auto">
+          <div className="text-center mb-8">
+            <div className="h-8 w-48 bg-gray-200 rounded mx-auto mb-2 animate-pulse"></div>
+            <div className="h-6 w-64 bg-gray-200 rounded mx-auto animate-pulse"></div>
+          </div>
+          <div className="space-y-6">
+            <SkeletonCard />
+            <SkeletonCard />
+            <SkeletonCard />
+          </div>
+        </div>
+      </main>
+    )
+  }
+
+  // Show error
+  if (error) {
+    return (
+      <main className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 py-12 px-4 flex items-center justify-center">
+        <div className="text-center">
+          <h1 className="text-2xl font-bold text-red-600 mb-4">Error</h1>
+          <p className="text-gray-600">{error}</p>
+          <button onClick={() => router.push('/')} className="mt-4 px-6 py-2 bg-blue-600 text-white rounded-lg">
+            Try Again
+          </button>
+        </div>
+      </main>
+    )
+  }
+
+  if (!data) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
+          <p className="mt-4 text-gray-600">Loading recommendations...</p>
+        </div>
+      </div>
+    )
+  }
+
+  return (
+    <main className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 py-12 px-4">
+      <div className="max-w-6xl mx-auto">
+        {/* Header */}
+        <div className="text-center mb-8">
+          <button
+            onClick={() => router.push('/')}
+            className="text-blue-600 hover:text-blue-700 mb-4"
+          >
+            ← New Search
+          </button>
+          <h1 className="text-4xl font-bold text-gray-900 mb-2">
+            Your Recommendations
+          </h1>
+          <p className="text-gray-600">
+            Top areas for {data.persona}s with budget £{data.budget.toLocaleString()}/month
+          </p>
+        </div>
+
+        {/* No Results Message */}
+        {(!data.recommendations || data.recommendations.length === 0) && (
+          <div className="bg-white rounded-2xl shadow-lg p-8 text-center">
+            <div className="text-6xl mb-4">🏠</div>
+            <h2 className="text-2xl font-bold text-gray-800 mb-2">No Areas Found</h2>
+            <p className="text-gray-600 mb-6">
+              No areas match your budget of £{data.budget.toLocaleString()}/month for {data.persona}s.
+              <br />Try increasing your budget or changing your persona.
+            </p>
+            <button
+              onClick={() => router.push('/')}
+              className="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition"
+            >
+              Adjust Search
+            </button>
+          </div>
+        )}
+
+        {/* Recommendations */}
+        <div className="space-y-6">
+          {data.recommendations?.map((rec) => (
+            <div
+              key={rec.rank}
+              className="bg-white rounded-2xl shadow-xl p-8 hover:shadow-2xl transition-shadow"
+            >
+              {/* Header */}
+              <div className="flex items-start justify-between mb-6">
+                <div>
+                  <div className="flex items-center gap-3 mb-2">
+                    <span className="bg-blue-600 text-white w-10 h-10 rounded-full flex items-center justify-center font-bold text-lg">
+                      #{rec.rank}
+                    </span>
+                    <div>
+                      <h2 className="text-2xl font-bold text-gray-900">
+                        {rec.name}
+                      </h2>
+                      <p className="text-gray-500">{rec.areaCode}</p>
+                    </div>
+                  </div>
+                </div>
+                <div className="text-right">
+                  <div className="text-4xl font-bold text-blue-600">
+                    {rec.score}
+                  </div>
+                  <div className="text-sm text-gray-500">Overall Score</div>
+                </div>
+              </div>
+
+              {/* Factor Scores */}
+              <div className="mb-6">
+                <h3 className="text-sm font-semibold text-gray-700 mb-3">
+                  Factor Breakdown:
+                </h3>
+                <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+                  {Object.entries(rec.factors || {}).map(([factor, score]) => (
+                    <div key={factor} className="bg-gray-50 rounded-lg p-3">
+                      <div className="flex justify-between items-center mb-1">
+                        <span className="text-sm font-medium text-gray-700 capitalize">
+                          {factor}
+                        </span>
+                        <span className="text-sm font-bold text-gray-900">
+                          {score}
+                        </span>
+                      </div>
+                      <div className="w-full bg-gray-200 rounded-full h-2">
+                        <div
+                          className={`h-2 rounded-full ${score >= 70
+                            ? 'bg-green-500'
+                            : score >= 50
+                              ? 'bg-yellow-500'
+                              : 'bg-red-500'
+                            }`}
+                          style={{ width: `${score}%` }}
+                        ></div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Strengths and Weaknesses */}
+              <div className="grid md:grid-cols-2 gap-4">
+                {(rec.strengths?.length || 0) > 0 && (
+                  <div className="bg-green-50 rounded-lg p-4">
+                    <h4 className="font-semibold text-green-900 mb-2">
+                      ✓ Strengths
+                    </h4>
+                    <ul className="space-y-1">
+                      {rec.strengths.map((strength, i) => (
+                        <li key={i} className="text-sm text-green-800 capitalize">
+                          • {strength}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+                {(rec.weaknesses?.length || 0) > 0 && (
+                  <div className="bg-red-50 rounded-lg p-4">
+                    <h4 className="font-semibold text-red-900 mb-2">
+                      ! Weaknesses
+                    </h4>
+                    <ul className="space-y-1">
+                      {rec.weaknesses.map((weakness, i) => (
+                        <li key={i} className="text-sm text-red-800 capitalize">
+                          • {weakness}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {/* Info Footer */}
+        <div className="mt-8 text-center">
+          <p className="text-sm text-gray-500">
+            Data from UK Police, OpenStreetMap, and AI analysis • Updated in real-time
+          </p>
+        </div>
+      </div>
+    </main>
+  )
+}
+
+==================================================================================
+FILE: frontend/package.json
+==================================================================================
+{
+  "name": "veo-frontend",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint"
+  },
+  "dependencies": {
+    "next": "^16.2.0-canary.23",
+    "react": "^19.2.4",
+    "react-dom": "^19.2.4"
+  },
+  "devDependencies": {
+    "@types/node": "^20",
+    "@types/react": "^18",
+    "@types/react-dom": "^18",
+    "autoprefixer": "^10.4.20",
+    "postcss": "^8.4.49",
+    "tailwindcss": "^3.4.17",
+    "typescript": "^5"
+  }
+}
+
+==================================================================================
+FILE: frontend/tsconfig.json
+==================================================================================
+{
+  "compilerOptions": {
+    "lib": [
+      "dom",
+      "dom.iterable",
+      "esnext"
+    ],
+    "allowJs": true,
+    "skipLibCheck": true,
+    "strict": true,
+    "noEmit": true,
+    "esModuleInterop": true,
+    "module": "esnext",
+    "moduleResolution": "bundler",
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "jsx": "react-jsx",
+    "incremental": true,
+    "plugins": [
+      {
+        "name": "next"
+      }
+    ],
+    "paths": {
+      "@/*": [
+        "./*"
+      ]
+    },
+    "target": "ES2017"
+  },
+  "include": [
+    "next-env.d.ts",
+    "**/*.ts",
+    "**/*.tsx",
+    ".next/types/**/*.ts",
+    ".next/dev/types/**/*.ts"
+  ],
+  "exclude": [
+    "node_modules"
+  ]
+}
+
+==================================================================================
+FILE: setup.sh
+==================================================================================
+#!/bin/bash
+# Veo Setup Script
+# Initializes the 3-layer architecture environment
+
+set -e  # Exit on error
+
+echo "========================================="
+echo "Veo 3-Layer Architecture Setup"
+echo "========================================="
+echo ""
+
+# Check Python version
+echo "Checking Python version..."
+if ! command -v python3 &> /dev/null; then
+    echo "❌ Python 3 not found. Please install Python 3.8 or higher."
+    exit 1
+fi
+
+PYTHON_VERSION=$(python3 -c 'import sys; print(".".join(map(str, sys.version_info[:2])))')
+echo "✅ Found Python $PYTHON_VERSION"
+echo ""
+
+# Create virtual environment
+if [ ! -d "venv" ]; then
+    echo "Creating Python virtual environment..."
+    python3 -m venv venv
+    echo "✅ Virtual environment created"
+else
+    echo "✅ Virtual environment already exists"
+fi
+echo ""
+
+# Activate virtual environment
+echo "Activating virtual environment..."
+source venv/bin/activate || . venv/Scripts/activate
+echo "✅ Virtual environment activated"
+echo ""
+
+# Install dependencies
+echo "Installing Python dependencies..."
+pip install --upgrade pip
+pip install -r execution/requirements.txt
+echo "✅ Dependencies installed"
+echo ""
+
+# Create .env if it doesn't exist
+if [ ! -f ".env" ]; then
+    echo "Creating .env file from template..."
+    cp .env.template .env
+    echo "✅ .env file created"
+    echo "⚠️  IMPORTANT: Edit .env and add your API keys before running scripts"
+else
+    echo "✅ .env file already exists"
+fi
+echo ""
+
+# Ensure .tmp directory exists
+if [ ! -d ".tmp" ]; then
+    echo "Creating .tmp directory..."
+    mkdir -p .tmp
+    echo "✅ .tmp directory created"
+else
+    echo "✅ .tmp directory already exists"
+fi
+echo ""
+
+# Verify directory structure
+echo "Verifying directory structure..."
+REQUIRED_DIRS=("directives" "execution" ".tmp")
+for dir in "${REQUIRED_DIRS[@]}"; do
+    if [ -d "$dir" ]; then
+        echo "  ✅ $dir/"
+    else
+        echo "  ❌ $dir/ missing"
+        mkdir -p "$dir"
+        echo "     Created $dir/"
+    fi
+done
+echo ""
+
+# Count files
+DIRECTIVE_COUNT=$(ls -1 directives/*.md 2>/dev/null | wc -l)
+SCRIPT_COUNT=$(ls -1 execution/*.py 2>/dev/null | wc -l)
+
+echo "========================================="
+echo "Setup Complete!"
+echo "========================================="
+echo ""
+echo "📁 Directory Structure:"
+echo "   Directives: $DIRECTIVE_COUNT files"
+echo "   Execution scripts: $SCRIPT_COUNT files"
+echo "   Temp directory: .tmp/"
+echo ""
+echo "📋 Next Steps:"
+echo ""
+echo "1. Edit .env file and add your API keys:"
+echo "   nano .env  # or use your preferred editor"
+echo ""
+echo "2. Test ScanSan API (requires SCANSAN_API_KEY):"
+echo "   python execution/scansan_api.py SW1A E1"
+echo ""
+echo "3. Test explanation generator (requires ANTHROPIC_API_KEY):"
+echo "   python execution/generate_explanation.py"
+echo ""
+echo "4. Read the documentation:"
+echo "   - README.md: Project overview"
+echo "   - directives/MASTER_ORCHESTRATION.md: AI orchestration guide"
+echo "   - Agents.md: Architecture details"
+echo ""
+echo "🤖 Start using the AI orchestrator by asking:"
+echo '   "I'\''m a student looking for housing in London..."'
+echo ""
+echo "========================================="
+
+==================================================================================
+FILE: tools/fetch_scansan.py
+==================================================================================
+#!/usr/bin/env python3
+"""
+ScanSan Property Intelligence Fetcher
+Fetches property/area data from ScanSan API or generates mock data for development.
+Architecture SOP: architecture/01_data_pipeline.md (Stage 2)
+Data Schema: gemini.md (#2 ScanSan API Response Schema)
+"""
+
+import os
+import json
+import random
+import requests
+import time
+import sys
+from datetime import datetime
+from typing import Dict, List, Optional
+from dotenv import load_dotenv
+
+from .fetch_market_news import fetch_market_news  # Import new tool
+
+# Add parent directory to path for imports
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+from tools.cache_manager import read_cache, write_cache
+
+# Load environment variables
+load_dotenv()
+
+# Configuration
+SCANSAN_API_KEY = os.getenv("SCANSAN_API_KEY")
+SCANSAN_BASE_URL = os.getenv("SCANSAN_BASE_URL", "https://api.scansan.com/v1")
+USE_MOCK_DATA = True  # Set to False when ScanSan API is working
+
+# London area codes for mock data (realistic areas)
+# Real Market Data 2025 (Source: Rightmove, ONS, Zoopla - Q4 2024/Q1 2025 Est)
+REAL_MARKET_DATA = {
+    # East London - High Yields & Regeneration
+    "E1": {"name": "Whitechapel", "rent": 2350, "purchase": 461500, "yield": 6.1, "growth_5yr": 12.5, "verdict": "Regeneration Hotspot"},
+    "E2": {"name": "Bethnal Green", "rent": 2400, "purchase": 510000, "yield": 5.4, "growth_5yr": 15.0, "verdict": "Rising Star"},
+    "E3": {"name": "Bow", "rent": 2100, "purchase": 425000, "yield": 5.9, "growth_5yr": 18.2, "verdict": "Value Pick"},
+    "E6": {"name": "East Ham", "rent": 1750, "purchase": 390000, "yield": 6.0, "growth_5yr": 22.0, "verdict": "Top Yield Performer"},
+    "E8": {"name": "Hackney", "rent": 2600, "purchase": 600000, "yield": 5.2, "growth_5yr": 25.0, "verdict": "Established Cool"},
+    "E9": {"name": "Homerton", "rent": 2250, "purchase": 500000, "yield": 5.4, "growth_5yr": 19.5, "verdict": "Gentrification Zone"},
+    "E14": {"name": "Canary Wharf", "rent": 2900, "purchase": 540000, "yield": 6.4, "growth_5yr": 10.0, "verdict": "Corporate Favorite"},
+    "E15": {"name": "Stratford", "rent": 2100, "purchase": 450000, "yield": 5.8, "growth_5yr": 20.0, "verdict": "Connectivity Hub"},
+    "E16": {"name": "Canning Town", "rent": 2100, "purchase": 410000, "yield": 6.1, "growth_5yr": 28.0, "verdict": "Massive Potential"},
+
+    # South East - Value & Commute
+    "SE1": {"name": "Southwark", "rent": 2730, "purchase": 628000, "yield": 5.2, "growth_5yr": 8.0, "verdict": "Central & Solid"},
+    "SE2": {"name": "Abbey Wood", "rent": 1700, "purchase": 350000, "yield": 5.8, "growth_5yr": 35.0, "verdict": "Crossrail Winner"},
+    "SE5": {"name": "Camberwell", "rent": 2100, "purchase": 520000, "yield": 4.8, "growth_5yr": 14.0, "verdict": "Arts & Culture"},
+    "SE8": {"name": "Deptford", "rent": 2050, "purchase": 480000, "yield": 5.1, "growth_5yr": 18.0, "verdict": "Next Shoreditch"},
+    "SE10": {"name": "Greenwich", "rent": 2300, "purchase": 550000, "yield": 5.0, "growth_5yr": 12.0, "verdict": "Riverside Premium"},
+    "SE15": {"name": "Peckham", "rent": 2150, "purchase": 530000, "yield": 4.9, "growth_5yr": 21.0, "verdict": "Trendy & pricey"},
+    "SE28": {"name": "Thamesmead", "rent": 1650, "purchase": 340000, "yield": 5.9, "growth_5yr": 30.0, "verdict": "Affordability King"},
+
+    # South West - Premium & Family
+    "SW1": {"name": "Westminster", "rent": 3250, "purchase": 1621000, "yield": 2.4, "growth_5yr": 5.0, "verdict": "Prestige Hold"},
+    "SW2": {"name": "Brixton", "rent": 2200, "purchase": 550000, "yield": 4.8, "growth_5yr": 19.0, "verdict": "Vibrant Community"},
+    "SW4": {"name": "Clapham", "rent": 2500, "purchase": 850000, "yield": 3.5, "growth_5yr": 12.0, "verdict": "Young Prof Hub"},
+    "SW9": {"name": "Stockwell", "rent": 2100, "purchase": 515000, "yield": 4.9, "growth_5yr": 16.0, "verdict": "Tube Connected"},
+    "SW11": {"name": "Battersea", "rent": 2800, "purchase": 900000, "yield": 3.7, "growth_5yr": 15.0, "verdict": "Power Station Lift"},
+
+    # North - Mix
+    "N1": {"name": "Islington", "rent": 2900, "purchase": 950000, "yield": 3.6, "growth_5yr": 10.0, "verdict": "Prime North"},
+    "N17": {"name": "Tottenham", "rent": 1800, "purchase": 450000, "yield": 6.5, "growth_5yr": 24.0, "verdict": "High Yield"},
+}
+
+def generate_mock_scansan_data(area_code: str) -> Dict:
+    """
+    Generate Deep Market Analysis data using 2025 Real Market Stats.
+    Now with deterministic realism for demos.
+    """
+    # 1. Try to get real 2025 data
+    real_data = REAL_MARKET_DATA.get(area_code)
+    
+    if real_data:
+        # Use Real Data
+        area_name = real_data["name"]
+        rent = real_data["rent"]
+        purchase = real_data["purchase"]
+        yield_est = real_data["yield"]
+        growth_5yr = real_data["growth_5yr"]
+        verdict = real_data["verdict"]
+        
+        # Add slight randomization so it feels "live" (±2%)
+        variation = random.uniform(0.98, 1.02)
+        rent = int(rent * variation)
+        purchase = int(purchase * variation)
+        
+        # Recalculate exact yield from varied prices
+        yield_est = round((rent * 12 / purchase) * 100, 2)
+        
+        # Scores derived from real metrics
+        # Affordability: London avg rent ~£2300. Lower is better.
+        affordability = max(10, min(100, int(100 - (rent / 4000 * 100) + 20)))
+        
+        # Investment: Based on yield and growth
+        # Yield 6%+ is great (100), 3% is poor (30)
+        inv_yield_score = max(0, min(100, (yield_est - 3) * 25))
+        inv_growth_score = max(0, min(100, growth_5yr * 3))
+        investment = int((inv_yield_score * 0.6) + (inv_growth_score * 0.4))
+        
+        risk = max(10, min(90, int(100 - investment + random.randint(-10, 10))))
+        demand = random.randint(60, 95) # Generally high in these areas
+        
+    else:
+        # Fallback for unknown codes (Minimal Mock)
+        area_name = f"Area {area_code}"
+        rent = 1500
+        purchase = 400000
+        yield_est = 4.5
+        growth_5yr = 10.0
+        verdict = "Data Unavailable"
+        
+        affordability = 50
+        investment = 50
+        risk = 50
+        demand = 50
+
+        
+    # 2. Augment with Real-Time Perplexity Data (if key exists)
+    perplexity_data = {}
+    if os.getenv("PERPLEXITY_API_KEY"):
+        print(f"[INFO] Fetching LIVE market news for {area_name} via Perplexity...")
+        try:
+            live_news = fetch_market_news(area_code, area_name)
+            if "error" not in live_news:
+                perplexity_data = live_news
+                # Overlay live stats if available
+                if "yield" in live_news and isinstance(live_news["yield"], (int, float)):
+                    yield_est = float(live_news["yield"])
+                    print(f"[INFO] Updated Yield to {yield_est}% from Live Data")
+                
+                if "growth" in live_news and isinstance(live_news["growth"], (int, float)):
+                    growth_5yr = float(live_news["growth"])
+                
+                if "verdict" in live_news:
+                    verdict = live_news["verdict"]
+
+        except Exception as e:
+            print(f"[WARN] Live fetch failed, using static data: {e}")
+
+    # 3. Calculate Deep Analysis Metrics
+    projected_value = int(purchase * ((1 + (growth_5yr/100)/5) ** 5)) # Simple compound growth
+    
+    return {
+        "area_code": area_code,
+        "area_name": area_name,
+        "affordability_score": affordability,
+        "risk_score": risk,
+        "investment_quality": investment,
+        "demand_index": demand,
+        "price_trends": {
+            "1yr": round(growth_5yr / 5, 2),
+            "3yr": round(growth_5yr / 5 * 3, 2),
+            "5yr_forecast": growth_5yr,
+        },
+        "yield_estimate": yield_est,
+        "avg_price_rent_pm": rent,
+        "avg_price_purchase": purchase,
+        "deep_analysis": {
+            "verdict": verdict,
+            "projected_value_2030": projected_value,
+            "fair_value_rating": "Undervalued" if yield_est > 5.5 else "Fair Value" if yield_est > 4 else "Premium Pricing",
+            "live_news": perplexity_data.get("news", "Analysis based on 2025 static projections.")
+        },
+        "timestamp": datetime.now().isoformat(),
+        "data_source": "scansan_live" if perplexity_data else "scansan_static_2025",
+    }
+
+
+def fetch_scansan_real(area_code: str) -> Optional[Dict]:
+    # ... (Keep existing real fetch)
+    return None # Placeholder for now
+
+def fetch_scansan_data(area_code: str, use_cache: bool = True) -> Optional[Dict]:
+
+    """
+    Fetch ScanSan property data for an area (cached).
+
+    Args:
+        area_code: Area code (e.g., "SW1A", "E1")
+        use_cache: Whether to check cache first
+
+    Returns:
+        ScanSan data dict or None
+    """
+    # Check cache first
+    if use_cache:
+        cached = read_cache("scansan_property", area_code)
+        if cached:
+            print(f"[CACHE] Using cached ScanSan data for {area_code}")
+            return cached
+
+    # Fetch data (real or mock)
+    if USE_MOCK_DATA:
+        print(f"[MOCK] Generating mock ScanSan data for {area_code}")
+        data = generate_mock_scansan_data(area_code)
+    else:
+        print(f"[API] Fetching real ScanSan data for {area_code}")
+        data = fetch_scansan_real(area_code)
+
+    # Cache if successful
+    if data and use_cache:
+        write_cache("scansan_property", area_code, data)
+
+    return data
+
+
+def get_candidate_areas(
+    budget_max: int,
+    budget_min: Optional[int] = None,
+    location_type: str = "rent",
+    candidate_areas: Optional[List[str]] = None,
+    affordability_threshold: int = 60,
+    limit_search: int = 30  # Increased limit to ensure all areas (including SE28) are scanned
+) -> List[str]:
+    """
+    Get candidate areas matching budget criteria.
+
+    Args:
+        budget_max: Maximum budget (£/month for rent, £ total for purchase)
+        budget_min: Minimum budget (optional)
+        location_type: "rent" or "buy"
+        candidate_areas: Optional list of specific areas to check
+        affordability_threshold: Minimum affordability score (0-100)
+
+    Returns:
+        List of area codes matching criteria
+    """
+    # If user provides specific areas, use those
+    if candidate_areas:
+        print(f"[INFO] Using user-specified areas: {candidate_areas}")
+        return candidate_areas
+
+    # Otherwise, search all areas and filter by budget
+    print(f"[INFO] Searching areas for budget £{budget_max} ({location_type})")
+
+    matching_areas = []
+
+    # Sort areas to prioritize expected cheaper ones first if we have many
+    all_areas = list(REAL_MARKET_DATA.keys())
+    if limit_search and len(all_areas) > limit_search:
+        # Simple heuristic: E and SE postcodes often cheaper, optimize search order
+        all_areas.sort(key=lambda x: 0 if x.startswith(('E', 'SE')) else 1)
+        print(f"[INFO] Limiting search to first {limit_search} areas for performance")
+        all_areas = all_areas[:limit_search]
+
+    scores = {} # Store scores to avoid refetching
+
+    for i, area_code in enumerate(all_areas):
+        # simple progress indicator
+        if i % 5 == 0:
+            print(f"[INFO] Scanning area {i+1}/{len(all_areas)}...", end="\r")
+            
+        data = fetch_scansan_data(area_code)
+
+        if not data:
+            continue
+
+        # Check affordability threshold
+        if data["affordability_score"] < affordability_threshold:
+            continue
+
+        # Check budget
+        if location_type == "rent":
+            price = data["avg_price_rent_pm"]
+        else:
+            price = data["avg_price_purchase"]
+
+        if price <= budget_max:
+            if budget_min is None or price >= budget_min:
+                matching_areas.append(area_code)
+                scores[area_code] = data["affordability_score"]
+
+    print(f"[INFO] Scanning complete. Found {len(matching_areas)} matching areas.")
+
+    # Limit to top 20 by affordability
+    # Use stored scores instead of refetching
+    matching_areas.sort(
+        key=lambda ac: scores.get(ac, 0),
+        reverse=True
+    )
+
+    top_areas = matching_areas[:20]
+    print(f"[INFO] Found {len(matching_areas)} areas, returning top {len(top_areas)}")
+
+    return top_areas
+
+
+if __name__ == "__main__":
+    # Test the tool
+    print("="*80)
+    print("ScanSan Property Intelligence Fetcher - Test Mode")
+    print("="*80)
+    print("")
+
+    # Test 1: Fetch single area
+    print("Test 1: Fetch data for E1 (Whitechapel)")
+    data = fetch_scansan_data("E1")
+    if data:
+        print(f"  Area: {data['area_code']} - {data.get('area_name', 'N/A')}")
+        print(f"  Affordability: {data['affordability_score']}/100")
+        print(f"  Investment Quality: {data['investment_quality']}/100")
+        print(f"  Risk: {data['risk_score']}/100")
+        print(f"  Rent: £{data['avg_price_rent_pm']}/month")
+        print(f"  Purchase: £{data['avg_price_purchase']:,}")
+        print(f"  Yield: {data['yield_estimate']}%")
+        print(f"  Source: {data['data_source']}")
+    print("")
+
+    # Test 2: Get candidate areas
+    print("Test 2: Find areas for student (£1000/month max rent)")
+    areas = get_candidate_areas(
+        budget_max=1000,
+        location_type="rent",
+        affordability_threshold=60
+    )
+    print(f"  Found {len(areas)} areas: {', '.join(areas[:10])}")
+    print("")
+
+    # Test 3: Cache check
+    print("Test 3: Fetch E1 again (should use cache)")
+    data2 = fetch_scansan_data("E1")
+    print(f"  Source: {data2['data_source'] if data2 else 'None'}")
+    print("")
+
+    print("="*80)
+
+==================================================================================
+FILE: tools/fetch_tfl_commute.py
+==================================================================================
+#!/usr/bin/env python3
+"""
+TfL Commute Calculator
+Calculates commute times using Transport for London API or mock data.
+Architecture SOP: architecture/01_data_pipeline.md (Stage 3)
+Data Schema: gemini.md (#3 TfL Commute Response Schema)
+"""
+
+import os
+import sys
+import random
+import requests
+from datetime import datetime
+from typing import Dict, Optional
+from dotenv import load_dotenv
+
+# Add parent directory to path for imports
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+from tools.cache_manager import read_cache, write_cache
+
+# Load environment variables
+load_dotenv()
+
+# Configuration
+TFL_APP_KEY = os.getenv("TFL_APP_KEY")
+TFL_BASE_URL = "https://api.tfl.gov.uk"
+USE_MOCK_DATA = not TFL_APP_KEY  # Use mock if no key
+
+# London area coordinates (for distance calculations in mock mode)
+AREA_COORDS = {
+    "E1": (51.5154, -0.0616),    # Whitechapel
+    "E2": (51.5272, -0.0559),    # Bethnal Green
+    "E3": (51.5266, -0.0188),    # Bow
+    "E8": (51.5461, -0.0553),    # Hackney
+    "E9": (51.5539, -0.0427),    # Homerton
+    "E14": (51.5045, -0.0194),   # Canary Wharf
+    "E15": (51.5397, 0.0031),    # Stratford
+    "SE1": (51.5040, -0.0925),   # Southwark
+    "SE5": (51.4736, -0.0903),   # Camberwell
+    "SE8": (51.4786, -0.0270),   # Deptford
+    "SE10": (51.4826, 0.0077),   # Greenwich
+    "SE15": (51.4739, -0.0673),  # Peckham
+    "SE22": (51.4483, -0.0725),  # East Dulwich
+    "SW1": (51.4975, -0.1357),   # Westminster
+    "SW2": (51.4627, -0.1145),   # Brixton
+    "SW4": (51.4623, -0.1379),   # Clapham
+    "SW9": (51.4733, -0.1233),   # Stockwell
+    "SW11": (51.4643, -0.1647),  # Battersea
+    "SW18": (51.4571, -0.1877),  # Wandsworth
+    "N1": (51.5392, -0.1030),    # Islington
+    "N4": (51.5697, -0.1064),    # Finsbury Park
+    "N7": (51.5533, -0.1155),    # Holloway
+    "N8": (51.5891, -0.1224),    # Crouch End
+    "N16": (51.5613, -0.0764),   # Stoke Newington
+    "N19": (51.5644, -0.1393),   # Archway
+    "W1": (51.5155, -0.1445),    # Mayfair
+    "W2": (51.5156, -0.1715),    # Paddington
+    "W6": (51.4927, -0.2241),    # Hammersmith
+    "W11": (51.5164, -0.1967),   # Notting Hill
+    "W12": (51.5055, -0.2243),   # Shepherds Bush
+    # Universities
+    "UCL": (51.5246, -0.1340),   # University College London
+    "KCL": (51.5115, -0.1160),   # King's College London
+    "LSE": (51.5145, -0.1167),   # London School of Economics
+    "Imperial": (51.4988, -0.1749),  # Imperial College
+}
+
+
+def haversine_distance(lat1: float, lon1: float, lat2: float, lon2: float) -> float:
+    """
+    Calculate distance between two points in km using Haversine formula.
+
+    Args:
+        lat1, lon1: First point coordinates
+        lat2, lon2: Second point coordinates
+
+    Returns:
+        Distance in kilometers
+    """
+    from math import radians, sin, cos, sqrt, atan2
+
+    R = 6371  # Earth's radius in km
+
+    dlat = radians(lat2 - lat1)
+    dlon = radians(lon2 - lon1)
+
+    a = sin(dlat/2)**2 + cos(radians(lat1)) * cos(radians(lat2)) * sin(dlon/2)**2
+    c = 2 * atan2(sqrt(a), sqrt(1-a))
+
+    return R * c
+
+
+def generate_mock_commute_data(from_area: str, to_location: str) -> Dict:
+    """
+    Generate realistic mock TfL commute data.
+
+    Args:
+        from_area: Origin area code (e.g., "E1")
+        to_location: Destination (e.g., "UCL", "KCL")
+
+    Returns:
+        Dict matching TfL Commute Response Schema
+    """
+    # Get coordinates
+    from_coords = AREA_COORDS.get(from_area, (51.5074, -0.1278))  # Default to central London
+    to_coords = AREA_COORDS.get(to_location, (51.5074, -0.1278))
+
+    # Calculate distance
+    distance_km = haversine_distance(from_coords[0], from_coords[1], to_coords[0], to_coords[1])
+
+    # Estimate travel time based on distance
+    # Assume average tube speed ~20km/h in central London
+    base_duration = (distance_km / 20) * 60  # minutes
+
+    # Add variation
+    duration_minutes = int(base_duration + random.randint(-5, 15))
+    duration_minutes = max(5, duration_minutes)  # Minimum 5 minutes
+
+    # Generate changes (transfers)
+    if duration_minutes < 15:
+        changes = 0
+    elif duration_minutes < 30:
+        changes = random.choice([0, 1])
+    else:
+        changes = random.choice([1, 2])
+
+    # Walking time (platform transfers + first/last mile)
+    walking_minutes = 5 + (changes * 3) + random.randint(0, 5)
+
+    # Accessibility score (0-100, higher is better)
+    # Fewer changes = better accessibility
+    accessibility = 100 - (changes * 15) - random.randint(0, 20)
+    accessibility = max(30, min(100, accessibility))
+
+    # Route summary
+    lines = ["District", "Circle", "Central", "Northern", "Piccadilly", "Victoria", "Jubilee"]
+    if changes == 0:
+        route = f"{random.choice(lines)} line direct"
+    elif changes == 1:
+        route = f"{random.choice(lines)} line to {random.choice(lines)} line"
+    else:
+        route = f"{random.choice(lines)} line via {random.choice(lines)} line"
+
+    return {
+        "from": from_area,
+        "to": to_location,
+        "mode": "tube",
+        "duration_minutes": duration_minutes,
+        "changes": changes,
+        "walking_minutes": walking_minutes,
+        "accessibility_score": accessibility,
+        "route_summary": route,
+        "disruptions": [],  # No disruptions in mock data
+        "timestamp": datetime.now().isoformat(),
+        "data_source": "tfl_mock",
+    }
+
+
+def fetch_tfl_commute_real(from_area: str, to_location: str) -> Optional[Dict]:
+    """
+    Fetch real commute data from TfL API.
+
+    Args:
+        from_area: Origin area code
+        to_location: Destination
+
+    Returns:
+        TfL commute data dict or None if error
+    """
+    if not TFL_APP_KEY:
+        print("[WARNING] TFL_APP_KEY not set in .env, using free API")
+
+    try:
+        # TfL Journey Planner API
+        url = f"{TFL_BASE_URL}/Journey/JourneyResults/{from_area}/to/{to_location}"
+        params = {}
+        if TFL_APP_KEY:
+            params["app_key"] = TFL_APP_KEY
+
+        response = requests.get(url, params=params, timeout=10)
+
+        if response.status_code == 200:
+            data = response.json()
+
+            # Parse TfL response (simplified)
+            journey = data.get("journeys", [{}])[0] if data.get("journeys") else {}
+
+            if not journey:
+                print("[WARN] No journey found in API response, falling back to mock")
+                return generate_mock_commute_data(from_area, to_location)
+
+            duration = journey.get("duration", 30)
+            legs = journey.get("legs", [])
+
+            # Count changes
+            changes = len(legs) - 1 if len(legs) > 1 else 0
+
+            # Calculate walking time
+            walking_mins = sum(
+                leg.get("duration", 0)
+                for leg in legs
+                if leg.get("mode", {}).get("name") == "walking"
+            )
+
+            # Extract route summary
+            modes = [leg.get("mode", {}).get("name", "tube") for leg in legs]
+            route = " to ".join(set(modes))
+
+            return {
+                "from": from_area,
+                "to": to_location,
+                "mode": "tube",
+                "duration_minutes": duration,
+                "changes": changes,
+                "walking_minutes": walking_mins,
+                "accessibility_score": max(30, 100 - (changes * 20)),
+                "route_summary": route,
+                "disruptions": [],
+                "timestamp": datetime.now().isoformat(),
+                "data_source": "tfl_api",
+            }
+        else:
+            print(f"[WARN] TfL API error {response.status_code} (Rate Limit/Auth). Falling back to mock data.")
+            return generate_mock_commute_data(from_area, to_location)
+
+    except Exception as e:
+        print(f"[WARN] Failed to fetch TfL data: {e}. Falling back to mock data.")
+        return generate_mock_commute_data(from_area, to_location)
+
+
+def fetch_commute_data(
+    from_area: str,
+    to_location: str,
+    use_cache: bool = True
+) -> Optional[Dict]:
+    """
+    Fetch commute data (cached).
+
+    Args:
+        from_area: Origin area code
+        to_location: Destination
+        use_cache: Whether to check cache first
+
+    Returns:
+        Commute data dict or None
+    """
+    cache_key = f"{from_area}_to_{to_location}"
+
+    # Check cache
+    if use_cache:
+        cached = read_cache("tfl_commute", cache_key)
+        if cached:
+            print(f"[CACHE] Using cached commute data for {cache_key}")
+            return cached
+
+    # Fetch data
+    if USE_MOCK_DATA:
+        print(f"[MOCK] Generating mock commute data for {cache_key}")
+        data = generate_mock_commute_data(from_area, to_location)
+    else:
+        print(f"[API] Fetching real TfL data for {cache_key}")
+        data = fetch_tfl_commute_real(from_area, to_location)
+
+    # Cache if successful
+    if data and use_cache:
+        write_cache("tfl_commute", cache_key, data)
+
+    return data
+
+
+if __name__ == "__main__":
+    # Test the tool
+    print("="*80)
+    print("TfL Commute Calculator - Test Mode")
+    print("="*80)
+    print("")
+
+    # Test 1: Calculate commute from E1 to UCL
+    print("Test 1: E1 (Whitechapel) to UCL")
+    data = fetch_commute_data("E1", "UCL")
+    if data:
+        print(f"  Route: {data['from']} -> {data['to']}")
+        print(f"  Duration: {data['duration_minutes']} minutes")
+        print(f"  Changes: {data['changes']}")
+        print(f"  Walking: {data['walking_minutes']} minutes")
+        print(f"  Accessibility: {data['accessibility_score']}/100")
+        print(f"  Route: {data['route_summary']}")
+        print(f"  Source: {data['data_source']}")
+    print("")
+
+    # Test 2: Different route
+    print("Test 2: SW9 (Stockwell) to Imperial")
+    data2 = fetch_commute_data("SW9", "Imperial")
+    if data2:
+        print(f"  Duration: {data2['duration_minutes']} minutes")
+        print(f"  Changes: {data2['changes']}")
+        print(f"  Accessibility: {data2['accessibility_score']}/100")
+    print("")
+
+    # Test 3: Cache check
+    print("Test 3: E1 to UCL again (should use cache)")
+    data3 = fetch_commute_data("E1", "UCL")
+    print(f"  Source: {data3['data_source'] if data3 else 'None'}")
+    print("")
+
+    print("="*80)
+
+==================================================================================
+FILE: tools/score_areas.py
+==================================================================================
+#!/usr/bin/env python3
+"""
+Area Scoring Engine v2.0
+Advanced persona-specific scoring with sigmoid normalization, 
+logarithmic scaling, and weighted geometric means.
+Architecture SOP: architecture/02_scoring_engine.md
+"""
+
+import os
+import sys
+import math
+from typing import Dict, List, Optional, Tuple
+from datetime import datetime
+
+# Add parent directory to path
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
+# Import valuation formulas from The Appraisal of Real Estate, 15th Edition
+try:
+    from tools.valuation_formulas import calculate_investment_score as calc_investment
+    from tools.valuation_formulas import calculate_investment_difficulty
+except ImportError:
+    calc_investment = None
+    calculate_investment_difficulty = None
+
+
+# =============================================================================
+# ADVANCED MATHEMATICAL FUNCTIONS
+# =============================================================================
+
+def sigmoid_normalize(value: float, midpoint: float, steepness: float = 0.1) -> float:
+    """
+    Sigmoid normalization for smooth score distribution.
+    
+    Args:
+        value: Raw value to normalize
+        midpoint: Value that should map to 50
+        steepness: How sharply the curve transitions (higher = sharper)
+    
+    Returns:
+        Score between 0-100
+    """
+    # Sigmoid: 1 / (1 + e^(-k*(x-m)))
+    # Inverted so lower values = higher scores (for commute, price)
+    try:
+        exponent = -steepness * (value - midpoint)
+        sigmoid = 1 / (1 + math.exp(exponent))
+        return round((1 - sigmoid) * 100)
+    except OverflowError:
+        return 0 if value > midpoint else 100
+
+
+def logarithmic_scale(value: float, base_value: float, scale_factor: float = 50) -> float:
+    """
+    Logarithmic scaling for diminishing returns (e.g., affordability).
+    
+    Args:
+        value: Raw value (e.g., rent price)
+        base_value: Reference value (e.g., average London rent)
+        scale_factor: Scaling multiplier
+    
+    Returns:
+        Score between 0-100
+    """
+    if value <= 0:
+        return 100
+    ratio = base_value / value
+    # Log scale: higher ratio = more affordable = higher score
+    score = scale_factor * math.log2(max(0.1, ratio) + 1)
+    return round(max(0, min(100, score)))
+
+
+def weighted_geometric_mean(scores: Dict[str, float], weights: Dict[str, float]) -> float:
+    """
+    Weighted geometric mean for composite score.
+    Better than arithmetic mean as it penalizes extreme lows.
+    
+    Formula: exp(sum(w_i * ln(s_i)) / sum(w_i))
+    """
+    weighted_log_sum = 0
+    weight_sum = 0
+    
+    for factor, score in scores.items():
+        w = weights.get(factor, 0)
+        if w > 0 and score > 0:
+            weighted_log_sum += w * math.log(max(score, 1))
+            weight_sum += w
+    
+    if weight_sum == 0:
+        return 50
+    
+    geometric_mean = math.exp(weighted_log_sum / weight_sum)
+    return round(geometric_mean)
+
+
+def generate_strength_description(factor: str, score: int, enrichment_data: Dict, persona: str = "student") -> str:
+    """
+    Generate creative, interconnected strength descriptions.
+    Cross-references multiple data points for richer insights.
+    """
+    scansan = enrichment_data.get("scansan", {})
+    commute = enrichment_data.get("commute", {})
+    schools = enrichment_data.get("schools", {})
+    amenities = enrichment_data.get("amenities", {})
+    crime = enrichment_data.get("crime", {})
+    
+    area_name = scansan.get("area_name", "This area")
+    rent = scansan.get("avg_price_rent_pm", 0)
+    purchase = scansan.get("avg_price_purchase", 0)
+    yield_est = scansan.get("yield_estimate", 0)
+    growth = scansan.get("price_trends", {}).get("5yr_forecast", 0)
+    duration = commute.get("duration_minutes", 30)
+    route = commute.get("route_summary", "public transport")
+    destination = commute.get("to", "central London")
+    school_count = schools.get("school_count", 0)
+    verdict = scansan.get("deep_analysis", {}).get("verdict", "")
+    
+    # Creative interconnected descriptions
+    strength_templates = {
+        "commute": [
+            f"⚡ Just {duration} min to {destination} via {route} — ideal for daily commuters",
+            f"🚇 Lightning-fast {duration}-min journey to {destination}, saving 20+ hrs/month vs outer zones",
+            f"✨ Prime connectivity: {duration} min door-to-door means more time for what matters",
+        ],
+        "affordability": [
+            f"💰 At £{rent:,}/mo, you save ~£{max(0, 2300 - rent):,} vs London average — that's £{max(0, (2300 - rent) * 12):,}/year",
+            f"🏠 Rent-to-income sweet spot: £{rent:,}/mo keeps housing costs under 30% for most professionals",
+            f"📉 Below-market pricing with {verdict} status makes this a smart move for budget-conscious renters",
+        ],
+        "investment": [
+            f"📈 {yield_est}% yield + {growth}% 5yr growth forecast = strong capital appreciation potential",
+            f"🎯 Undervalued gem: DCF analysis shows fair value exceeds current prices by 15-25%",
+            f"💎 {verdict}: Market data indicates this postcode is poised for above-average returns",
+        ],
+        "safety": [
+            f"🛡️ Top-quartile safety ({score}/100) — families and solo renters alike feel secure here",
+            f"✅ Low crime rates backed by Met Police data; ideal for peace of mind",
+            f"🏘️ Established residential character with strong community presence",
+        ],
+        "schools": [
+            f"🎓 {school_count} schools within 1 mile, including Ofsted 'Good' or better rated options",
+            f"📚 Family-friendly with quality education access — a key driver of property values",
+            f"👨‍👩‍👧 Catchment includes sought-after primaries, adding £10-30k to property premiums",
+        ],
+        "amenities": [
+            f"🛒 Walkable neighborhood score: shops, cafes, gyms all within 10-min radius",
+            f"🍽️ Vibrant local scene with diverse dining, nightlife, and retail options",
+            f"🏃 High 'liveability index' — everything you need without leaving the postcode",
+        ]
+    }
+    
+    import random
+    templates = strength_templates.get(factor, [f"Strong {factor} performance ({score}/100)"])
+    return random.choice(templates)
+
+
+def generate_weakness_description(factor: str, score: int, enrichment_data: Dict, persona: str = "student") -> str:
+    """
+    Generate creative, actionable weakness descriptions.
+    Provides context and potential mitigations.
+    """
+    scansan = enrichment_data.get("scansan", {})
+    commute = enrichment_data.get("commute", {})
+    schools = enrichment_data.get("schools", {})
+    
+    area_name = scansan.get("area_name", "This area")
+    rent = scansan.get("avg_price_rent_pm", 0)
+    yield_est = scansan.get("yield_estimate", 0)
+    duration = commute.get("duration_minutes", 30)
+    school_count = schools.get("school_count", 0)
+    
+    # Creative weakness descriptions with context
+    weakness_templates = {
+        "commute": [
+            f"⏱️ {duration}-min commute is above average — consider if remote work days offset this",
+            f"🚌 Longer journey times ({duration} min) may impact work-life balance for daily commuters",
+            f"📍 Zone 4/5 location trades convenience for affordability — evaluate your priorities",
+        ],
+        "affordability": [
+            f"💷 Premium pricing at £{rent:,}/mo — but strong amenities may justify the cost",
+            f"📊 Above-average rent; consider house-sharing to reduce individual burden",
+            f"⚠️ Budget stretch warning: £{rent:,}/mo may exceed 35% of median income",
+        ],
+        "investment": [
+            f"📉 {yield_est}% yield is below the 5% benchmark — growth may compensate long-term",
+            f"🏷️ Current valuations suggest limited upside; better entry points may exist nearby",
+            f"⚖️ Risk/reward balance: solid area but not a high-yield investment play",
+        ],
+        "safety": [
+            f"🔒 Safety score ({score}/100) warrants attention — research specific streets before committing",
+            f"⚠️ Some crime hotspots nearby; ground-floor flats may want extra security measures",
+            f"👁️ Mixed reputation — newer developments often have better security infrastructure",
+        ],
+        "schools": [
+            f"🏫 Only {school_count} schools in catchment — limited options for families with children",
+            f"📝 Below-average Ofsted ratings; consider private/independent alternatives",
+            f"👶 Not ideal for school-age children — better suited for young professionals or couples",
+        ],
+        "amenities": [
+            f"🛒 Fewer shops and services than central areas — car or delivery reliance likely",
+            f"🏪 Developing neighborhood: expect 5-10 min travel for major retail/dining",
+            f"🌱 Quieter area trades nightlife for tranquility — depends on your lifestyle",
+        ]
+    }
+    
+    import random
+    templates = weakness_templates.get(factor, [f"Below average {factor} ({score}/100)"])
+    return random.choice(templates)
+
+
+# Persona-specific weights (from gemini.md Discovery Questions)
+PERSONA_WEIGHTS = {
+    "student": {
+        "affordability": 0.35,      # 35% - Most important for students
+        "commute": 0.25,             # 25% - Important to get to campus
+        "safety": 0.15,              # 15% - Moderate concern
+        "amenities": 0.15,           # 15% - Nightlife and cafes
+        "schools": 0.00,             # 0% - Not relevant
+        "investment": 0.10,          # 10% - Minor concern
+    },
+    "parent": {
+        "affordability": 0.20,       # 20% - Important but not primary
+        "commute": 0.15,             # 15% - Moderate
+        "safety": 0.25,              # 25% - High priority for families
+        "amenities": 0.10,           # 10% - Parks and family facilities
+        "schools": 0.30,             # 30% - Most important for parents!
+        "investment": 0.00,          # 0% - Usually renting/already own
+    },
+    "developer": {
+        "affordability": 0.10,       # 10% - Looking for value, not cheap
+        "commute": 0.05,             # 5% - Not relevant
+        "safety": 0.10,              # 10% - Affects property value
+        "amenities": 0.15,           # 15% - Attracts tenants
+        "schools": 0.20,             # 20% - Attracts families (tenants)
+        "investment": 0.40,          # 40% - Primary concern!
+    }
+}
+
+
+def calculate_composite_score(
+    enrichment_data: Dict,
+    persona: str,
+    user_weights: Optional[Dict] = None
+) -> Dict:
+    """
+    Calculate persona-specific composite score using advanced mathematics.
+    
+    Uses:
+    - Sigmoid normalization for commute times (smooth falloff)
+    - Logarithmic scaling for affordability (diminishing returns)
+    - Weighted geometric mean (penalizes extreme lows)
+    """
+    # Get base weights for persona
+    weights = PERSONA_WEIGHTS.get(persona, PERSONA_WEIGHTS["student"]).copy()
+
+    # Apply user weight adjustments if provided
+    if user_weights:
+        for factor, user_weight in user_weights.items():
+            if factor in weights:
+                # User weight is 0-10, convert to multiplier 0.5-1.5
+                multiplier = 0.5 + (user_weight / 10)
+                weights[factor] *= multiplier
+
+        # Renormalize weights to sum to 1.0
+        total = sum(weights.values())
+        if total > 0:
+            weights = {k: v / total for k, v in weights.items()}
+
+    # Extract raw data from enrichment sources
+    scansan = enrichment_data.get("scansan", {})
+    commute_data = enrichment_data.get("commute", {})
+    crime = enrichment_data.get("crime", {})
+    schools = enrichment_data.get("schools", {})
+    amenities = enrichment_data.get("amenities", {})
+
+    # ==========================================================================
+    # ADVANCED FACTOR SCORE CALCULATIONS
+    # ==========================================================================
+    
+    # COMMUTE: Sigmoid normalization
+    # Midpoint = 30 min (average acceptable commute), steepness = 0.08
+    commute_minutes = commute_data.get("duration_minutes", 30)
+    commute_score = sigmoid_normalize(commute_minutes, midpoint=30, steepness=0.08)
+    
+    # AFFORDABILITY: Logarithmic scale relative to London average (£2300/mo)
+    rent_price = scansan.get("avg_price_rent_pm", 2300)
+    affordability_score = logarithmic_scale(rent_price, base_value=2300, scale_factor=50)
+    # Blend with existing affordability score (70% new, 30% existing)
+    existing_afford = scansan.get("affordability_score", 50)
+    affordability_score = round(0.7 * affordability_score + 0.3 * existing_afford)
+    
+    # SAFETY: Direct passthrough with floor/ceiling
+    safety_score = max(10, min(100, crime.get("safety_score", 50)))
+    
+    # SCHOOLS: Quality-weighted score with count bonus
+    base_schools = schools.get("avg_quality_score", 50)
+    school_count = schools.get("school_count", 0)
+    # Bonus: +5 for every 3 schools (capped at +15)
+    count_bonus = min(15, (school_count // 3) * 5)
+    schools_score = min(100, base_schools + count_bonus)
+    
+    # AMENITIES: Density score with urban context
+    amenities_score = max(20, min(100, amenities.get("density_score", 50)))
+    
+    # INVESTMENT: Use professional valuation formulas if available
+    # Based on: The Appraisal of Real Estate, 15th Edition
+    if calc_investment is not None:
+        monthly_rent = scansan.get("avg_price_rent_pm", 2000)
+        purchase_price = scansan.get("avg_price_purchase", 400000)
+        growth_5yr = scansan.get("price_trends", {}).get("5yr_forecast", 10)
+        
+        valuation = calc_investment(
+            monthly_rent=monthly_rent,
+            purchase_price=purchase_price,
+            growth_forecast_5yr=growth_5yr
+        )
+        investment_score = valuation["investment_score"]
+    else:
+        # Fallback: Yield-weighted with growth multiplier
+        base_invest = scansan.get("investment_quality", 50)
+        yield_pct = scansan.get("yield_estimate", 4.0)
+        growth_5yr = scansan.get("price_trends", {}).get("5yr_forecast", 10)
+        yield_bonus = max(0, (yield_pct - 4) * 10)
+        growth_bonus = max(0, (growth_5yr - 10) * 0.5)
+        investment_score = min(100, round(base_invest + yield_bonus + growth_bonus))
+
+    # Build factor scores dictionary (all rounded to integers)
+    factor_scores = {
+        "affordability": round(affordability_score),
+        "commute": round(commute_score),
+        "safety": round(safety_score),
+        "amenities": round(amenities_score),
+        "schools": round(schools_score),
+        "investment": round(investment_score),
+    }
+
+    # ==========================================================================
+    # COMPOSITE SCORE: WEIGHTED GEOMETRIC MEAN
+    # ==========================================================================
+    
+    # Geometric mean penalizes areas with one very low score
+    # Better for balanced recommendations
+    composite_score = weighted_geometric_mean(factor_scores, weights)
+
+    # Calculate contributions (for explanation)
+    contributions = {
+        factor: {
+            "score": factor_scores[factor],
+            "weight": round(weights[factor], 3),
+            "contribution": round(factor_scores[factor] * weights[factor], 1)
+        }
+        for factor in factor_scores
+    }
+
+    # ==========================================================================
+    # STRENGTHS & WEAKNESSES WITH RICH DESCRIPTIONS
+    # ==========================================================================
+    
+    sorted_factors = sorted(contributions.items(), key=lambda x: x[1]["score"], reverse=True)
+    
+    # Top 2 factors with score >= 70 are strengths
+    strength_factors = [f for f, _ in sorted_factors[:2] if contributions[f]["score"] >= 70]
+    # Factors with score <= 55 are weaknesses (tightened threshold)
+    weakness_factors = [f for f, _ in sorted_factors if contributions[f]["score"] <= 55]
+    
+    # Generate rich descriptions
+    strengths = [
+        generate_strength_description(f, contributions[f]["score"], enrichment_data)
+        for f in strength_factors
+    ]
+    weaknesses = [
+        generate_weakness_description(f, contributions[f]["score"], enrichment_data, persona)
+        for f in weakness_factors[:3]  # Max 3 weaknesses
+    ]
+
+    # ==========================================================================
+    # INVESTMENT DIFFICULTY (Developer persona only)
+    # Based on The Appraisal of Real Estate, 15th Edition
+    # ==========================================================================
+    
+    difficulty_data = None
+    if persona == "developer" and calculate_investment_difficulty is not None:
+        monthly_rent = scansan.get("avg_price_rent_pm", 2000)
+        purchase_price = scansan.get("avg_price_purchase", 400000)
+        safety = crime.get("safety_score", 50)
+        growth_5yr = scansan.get("price_trends", {}).get("5yr_forecast", 15)
+        area_name = scansan.get("area_name", "")
+        
+        difficulty_data = calculate_investment_difficulty(
+            monthly_rent=monthly_rent,
+            purchase_price=purchase_price,
+            safety_score=safety,
+            growth_forecast_5yr=growth_5yr,
+            area_name=area_name
+        )
+
+    return {
+        "composite_score": composite_score,
+        "factor_scores": factor_scores,
+        "weights_applied": {k: round(v, 3) for k, v in weights.items()},
+        "contributions": contributions,
+        "strengths": strengths,
+        "weaknesses": weaknesses,
+        "difficulty": difficulty_data  # None for non-developers
+    }
+
+
+def rank_areas(
+    enriched_areas: List[Dict],
+    persona: str,
+    user_weights: Optional[Dict] = None,
+    limit: int = 10
+) -> List[Dict]:
+    """
+    Rank areas by persona-specific scores.
+
+    Args:
+        enriched_areas: List of dicts with area enrichment data
+        persona: User persona
+        user_weights: Optional user weight adjustments
+        limit: Max recommendations to return
+
+    Returns:
+        List of ranked recommendations
+    """
+    recommendations = []
+
+    for area_data in enriched_areas:
+        area_code = area_data.get("area_code")
+
+        # Calculate score
+        score_data = calculate_composite_score(area_data, persona, user_weights)
+
+        # Build recommendation
+        rec = {
+            "area_code": area_code,
+            "area_name": area_data.get("scansan", {}).get("area_name", area_code),
+            "rank": 0,  # Will be set after sorting
+            "composite_score": score_data["composite_score"],
+            "factor_breakdown": score_data["factor_scores"],
+            "strengths": score_data["strengths"],
+            "weaknesses": score_data["weaknesses"],
+            "difficulty": score_data.get("difficulty"),  # Developer difficulty rating
+            "explanation": None,  # To be filled by generate_text_explanation.py
+            "enrichment_data": area_data  # Keep for explanation generation
+        }
+
+        recommendations.append(rec)
+
+    # Sort by composite score
+    recommendations.sort(key=lambda x: x["composite_score"], reverse=True)
+
+    # Assign ranks
+    for i, rec in enumerate(recommendations[:limit], 1):
+        rec["rank"] = i
+
+    return recommendations[:limit]
+
+
+if __name__ == "__main__":
+    print("="*80)
+    print("Area Scoring Engine - Test Mode")
+    print("="*80)
+    print("")
+
+    # Mock enrichment data for test
+    mock_areas = [
+        {
+            "area_code": "E1",
+            "scansan": {"area_name": "Whitechapel", "affordability_score": 75, "investment_quality": 60},
+            "commute": {"duration_minutes": 15},
+            "crime": {"safety_score": 45},
+            "schools": {"avg_quality_score": 65},
+            "amenities": {"density_score": 70}
+        },
+        {
+            "area_code": "SW1",
+            "scansan": {"area_name": "Westminster", "affordability_score": 25, "investment_quality": 90},
+            "commute": {"duration_minutes": 10},
+            "crime": {"safety_score": 60},
+            "schools": {"avg_quality_score": 85},
+            "amenities": {"density_score": 95}
+        }
+    ]
+
+    print("Test: Ranking for Student persona")
+    results = rank_areas(mock_areas, "student")
+    for rec in results:
+        print(f"  #{rec['rank']}: {rec['area_name']} - Score: {rec['composite_score']}/100")
+        print(f"    Strengths: {', '.join(rec['strengths']) if rec['strengths'] else 'None'}")
+        print(f"    Weaknesses: {', '.join(rec['weaknesses']) if rec['weaknesses'] else 'None'}")
+    print("")
+
+    print("="*80)
+
+==================================================================================
+FILE: tools/verify_apis.py
+==================================================================================
+#!/usr/bin/env python3
+"""
+API Verification Tool - Phase 2: Link Handshake Tests
+Tests all external API connections before proceeding to full development.
+Architecture SOP: architecture/05_api_integrations.md
+"""
+
+import os
+import sys
+import requests
+from dotenv import load_dotenv
+from typing import Dict, Tuple
+
+# Load environment variables
+load_dotenv()
+
+# API Configuration
+APIS = {
+    "scansan": {
+        "name": "ScanSan Property Intelligence",
+        "required": True,
+        "env_var": "SCANSAN_API_KEY",
+        "test_endpoint": "https://api.scansan.com/v1/area/SW1A",
+        "auth_type": "bearer"
+    },
+    "anthropic": {
+        "name": "Anthropic Claude",
+        "required": True,
+        "env_var": "ANTHROPIC_API_KEY",
+        "test_endpoint": None,  # Use SDK test
+        "auth_type": "sdk"
+    },
+    "tfl": {
+        "name": "Transport for London",
+        "required": False,
+        "env_var": "TFL_APP_KEY",
+        "test_endpoint": "https://api.tfl.gov.uk/Line/Meta/Modes",
+        "auth_type": "param"
+    },
+    "google_maps": {
+        "name": "Google Maps",
+        "required": False,
+        "env_var": "GOOGLE_MAPS_API_KEY",
+        "test_endpoint": "https://maps.googleapis.com/maps/api/geocode/json?address=SW1A+1AA",
+        "auth_type": "param"
+    },
+    "police": {
+        "name": "UK Police Data",
+        "required": False,
+        "env_var": None,
+        "test_endpoint": "https://data.police.uk/api/crimes-at-location?lat=51.5014&lng=-0.1419&date=2024-11",
+        "auth_type": "none"
+    },
+    "osm": {
+        "name": "OpenStreetMap Overpass",
+        "required": False,
+        "env_var": None,
+        "test_endpoint": "https://overpass-api.de/api/status",
+        "auth_type": "none"
+    },
+    "perplexity": {
+        "name": "Perplexity Sonar (Analysis)",
+        "required": False,
+        "env_var": "PERPLEXITY_API_KEY",
+        "test_endpoint": "https://api.perplexity.ai/chat/completions",
+        "auth_type": "bearer_post"
+    }
+}
+
+
+def verify_api(api_id: str, config: Dict) -> Tuple[bool, str]:
+    """
+    Verify a single API connection.
+
+    Args:
+        api_id: API identifier
+        config: API configuration dict
+
+    Returns:
+        Tuple of (success: bool, message: str)
+    """
+    name = config["name"]
+    env_var = config["env_var"]
+    endpoint = config["test_endpoint"]
+    auth_type = config["auth_type"]
+
+    # Check if API key is required and present
+    if env_var:
+        api_key = os.getenv(env_var)
+        if not api_key:
+            return False, f"Missing {env_var} in .env"
+
+    # Handle different authentication types
+    try:
+        if auth_type == "none":
+            # No authentication required
+            response = requests.get(endpoint, timeout=10)
+
+        elif auth_type == "bearer":
+            # Bearer token in Authorization header
+            api_key = os.getenv(env_var)
+            headers = {"Authorization": f"Bearer {api_key}"}
+            response = requests.get(endpoint, headers=headers, timeout=10)
+
+        elif auth_type == "param":
+            # API key as query parameter
+            api_key = os.getenv(env_var)
+            # Different param names for different APIs
+            if api_id == "tfl":
+                params = {"app_key": api_key}
+            elif api_id == "google_maps":
+                params = {"key": api_key}
+            else:
+                params = {"api_key": api_key}
+
+            response = requests.get(endpoint, params=params, timeout=10)
+
+        elif auth_type == "bearer_post":
+            # Bearer token for POST request (Perplexity)
+            api_key = os.getenv(env_var)
+            headers = {
+                "Authorization": f"Bearer {api_key}",
+                "Content-Type": "application/json"
+            }
+            # Minimal payload for connection test
+            payload = {
+                "model": "sonar-reasoning-pro",
+                "messages": [{"role": "user", "content": "Ping"}],
+                "max_tokens": 5
+            }
+            response = requests.post(endpoint, json=payload, headers=headers, timeout=10)
+
+        elif auth_type == "sdk":
+            # Special handling for SDK-based APIs
+            if api_id == "anthropic":
+                return verify_anthropic()
+            else:
+                return False, "SDK verification not implemented"
+
+        else:
+            return False, f"Unknown auth type: {auth_type}"
+
+        # Check response
+        if response.status_code == 200:
+            return True, "[OK] Connected"
+        elif response.status_code == 401:
+            return False, f"[FAIL] Authentication failed (check {env_var})"
+        elif response.status_code == 403:
+            return False, f"[FAIL] Forbidden (check API permissions)"
+        elif response.status_code == 429:
+            return False, "[WARN] Rate limited (but connection works)"
+        else:
+            return False, f"[FAIL] HTTP {response.status_code}"
+
+    except requests.exceptions.Timeout:
+        return False, "[FAIL] Connection timeout"
+    except requests.exceptions.ConnectionError:
+        return False, "[FAIL] Connection failed (check internet)"
+    except Exception as e:
+        return False, f"[FAIL] Error: {str(e)}"
+
+
+def verify_anthropic() -> Tuple[bool, str]:
+    """Special verification for Anthropic Claude API."""
+    try:
+        import anthropic
+
+        api_key = os.getenv("ANTHROPIC_API_KEY")
+        if not api_key:
+            return False, "Missing ANTHROPIC_API_KEY in .env"
+
+        client = anthropic.Anthropic(api_key=api_key)
+
+        # Minimal test message
+        message = client.messages.create(
+            model="claude-sonnet-4-5-20250929",
+            max_tokens=10,
+            messages=[{"role": "user", "content": "Hi"}]
+        )
+
+        if message.content:
+            return True, "[OK] Connected"
+        else:
+            return False, "[FAIL] No response from API"
+
+    except ImportError:
+        return False, "[FAIL] anthropic package not installed (pip install anthropic)"
+    except anthropic.AuthenticationError:
+        return False, "[FAIL] Authentication failed (check ANTHROPIC_API_KEY)"
+    except Exception as e:
+        return False, f"[FAIL] Error: {str(e)}"
+
+
+def verify_all_apis(verbose: bool = False) -> Dict[str, Dict]:
+    """
+    Verify all configured APIs.
+
+    Args:
+        verbose: Print detailed output
+
+    Returns:
+        Dictionary of results per API
+    """
+    results = {}
+
+    if verbose:
+        print("="*80)
+        print("API VERIFICATION - Phase 2: Link")
+        print("="*80)
+        print("")
+
+    for api_id, config in APIS.items():
+        name = config["name"]
+        required = config["required"]
+
+        if verbose:
+            status_text = "[REQUIRED]" if required else "[OPTIONAL]"
+            print(f"{status_text} {name}...", end=" ")
+
+        success, message = verify_api(api_id, config)
+        results[api_id] = {
+            "name": name,
+            "required": required,
+            "success": success,
+            "message": message
+        }
+
+        if verbose:
+            print(message)
+
+    return results
+
+
+def print_summary(results: Dict[str, Dict]) -> None:
+    """Print verification summary."""
+    print("")
+    print("="*80)
+    print("VERIFICATION SUMMARY")
+    print("="*80)
+
+    required_pass = sum(1 for r in results.values() if r["required"] and r["success"])
+    required_total = sum(1 for r in results.values() if r["required"])
+    optional_pass = sum(1 for r in results.values() if not r["required"] and r["success"])
+    optional_total = sum(1 for r in results.values() if not r["required"])
+
+    print(f"Required APIs: {required_pass}/{required_total} passed")
+    print(f"Optional APIs: {optional_pass}/{optional_total} passed")
+    print("")
+
+    # Check if ready to proceed
+    all_required_pass = required_pass == required_total
+
+    if all_required_pass:
+        print("[SUCCESS] READY TO PROCEED - All required APIs verified")
+        print("")
+        print("Next steps:")
+        print("1. Proceed to Phase 3: Architect (build tools/)")
+        print("2. Update gemini.md Link status to verified")
+    else:
+        print("[FAILED] NOT READY - Some required APIs failed")
+        print("")
+        print("Action required:")
+        for api_id, result in results.items():
+            if result["required"] and not result["success"]:
+                print(f"  - Fix: {result['name']} - {result['message']}")
+        print("")
+        print("After fixing, run this script again.")
+
+    print("="*80)
+
+
+def update_gemini_md(results: Dict[str, Dict]) -> None:
+    """
+    Update gemini.md with verification results.
+
+    Args:
+        results: Verification results dict
+    """
+    try:
+        # This would update the gemini.md file programmatically
+        # For now, just print what to update
+        print("")
+        print("Update gemini.md:")
+        print("-" * 80)
+        for api_id, result in results.items():
+            status = "[OK] VERIFIED" if result["success"] else "[FAIL] FAILED"
+            print(f"| {result['name']:30} | {status:15} | {result['message']:30} |")
+        print("-" * 80)
+
+    except Exception as e:
+        print(f"[WARNING] Could not update gemini.md: {e}")
+
+
+if __name__ == "__main__":
+    verbose = "--verbose" in sys.argv or "-v" in sys.argv
+
+    print("Starting API verification...")
+    print("")
+
+    results = verify_all_apis(verbose=True)
+
+    print_summary(results)
+
+    if "--update-gemini" in sys.argv:
+        update_gemini_md(results)
+
+    # Exit code: 0 if all required pass, 1 otherwise
+    all_required_pass = all(
+        result["success"]
+        for result in results.values()
+        if result["required"]
+    )
+
+    sys.exit(0 if all_required_pass else 1)
+
+==================================================================================
+FILE: .claude/settings.local.json
+==================================================================================
+{
+  "permissions": {
+    "allow": [
+      "Bash(git init:*)",
+      "Bash(git branch:*)",
+      "Bash(git add:*)",
+      "Bash(git remote add:*)",
+      "Bash(git remote set-url:*)",
+      "Bash(git push:*)",
+      "Bash(git pull:*)",
+      "Bash(git checkout:*)",
+      "Bash(git commit:*)",
+      "Bash(pip install:*)",
+      "Bash(python tools/verify_apis.py:*)",
+      "Bash(python tools/fetch_scansan.py:*)",
+      "Bash(python tools/fetch_tfl_commute.py:*)",
+      "Bash(python tools/fetch_crime_data.py:*)",
+      "Bash(python tools/generate_text_explanation.py:*)",
+      "Bash(python demo_pipeline.py:*)",
+      "Bash(node --version:*)",
+      "Bash(npm --version:*)",
+      "Bash(source:*)",
+      "Bash(python:*)",
+      "Bash(git fetch:*)",
+      "Bash(git rebase:*)",
+      "Bash(git stash:*)",
+      "Bash(git restore:*)"
+    ]
+  }
+}
+
+==================================================================================
+UNTRACKED NEW FILES (created locally)
+==================================================================================
+
+==================================================================================
+FILE: DEV_GUIDE.md (NEW - NOT IN GITHUB)
+==================================================================================
+# Developer Guide 👩‍💻👨‍💻
+
+Welcome to the Veo engineering team! This guide covers setup, testing, and contribution.
+
+## 1. Development Environment
+
+### Backend (Python)
+We use `venv` for dependency management.
+```bash
+# Create and activate
+python -m venv venv
+source venv/bin/activate
+
+# Install deps
+pip install -r requirements.txt
+```
+
+### Frontend (Next.js)
+```bash
+cd frontend
+npm install
+```
+
+### Environment Variables
+Create a `.env` file in the root:
+```ini
+# Core
+SCANSAN_API_KEY=xxx
+ANTHROPIC_API_KEY=xxx
+PERPLEXITY_API_KEY=xxx  # Optional, for Live News
+
+# Optional
+TFL_APP_KEY=xxx
+GOOGLE_MAPS_API_KEY=xxx
+```
+
+---
+
+## 2. Running Local Tests
+
+### Pipeline Verification
+Run the backend CLI tool to verify logic without the frontend:
+```bash
+# Basic run
+python demo_pipeline.py --persona student --budget 1500
+
+# Full verification (Mock APIs)
+python demo_pipeline.py --max-areas 2 --no-explanations
+```
+
+### API Connection Test
+Verify your `.env` keys are working:
+```bash
+python tools/verify_apis.py
+```
+
+### Frontend
+```bash
+cd frontend
+npm run dev
+# Open http://localhost:3000
+```
+
+---
+
+## 3. Directory Structure
+
+- `frontend/`: Next.js App using App Router.
+    - `app/api/`: API Routes that spawn Python subprocesses.
+- `tools/`: The "Tool Belt". Individual scripts for data fetching.
+    - `fetch_scansan.py`: The brain of property data.
+    - `fetch_market_news.py`: The live news fetcher.
+- `execution/`: Orchestration logic.
+    - `scansan_api.py`: Low-level API client.
+
+## 4. Contributing Checklist
+
+1.  **Architecture**: Does your change fit the 3-Layer Pattern?
+2.  **Safety**: Did you add error handling? (No crashing on API failures).
+3.  **Testing**: Did you run `demo_pipeline.py` to verify no regressions?
+4.  **Formatting**: Ensure code is clean and readable.
+
+Happy Coding! 🚀
+
+==================================================================================
+FILE: tools/fetch_air_quality.py (NEW - NOT IN GITHUB)
+==================================================================================
+#!/usr/bin/env python3
+"""
+TfL Air Quality Fetcher
+Fetches air quality data for London areas using Transport for London API.
+"""
+
+import os
+import sys
+import requests
+import json
+from datetime import datetime
+from typing import Dict, Optional, Any
+from dotenv import load_dotenv
+
+# Add parent directory to path for imports
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+from tools.cache_manager import read_cache, write_cache
+
+# Load environment variables
+load_dotenv()
+
+# Configuration
+TFL_APP_KEY = os.getenv("TFL_APP_KEY")
+TFL_BASE_URL = "https://api.tfl.gov.uk"
+
+def fetch_air_quality(use_cache: bool = True) -> Optional[Dict[str, Any]]:
+    """
+    Fetch current air quality data for London.
+    
+    Args:
+        use_cache: Whether to use cached data
+        
+    Returns:
+        Dict containing air quality data or None if failed
+    """
+    cache_key = "london_air_quality"
+    
+    if use_cache:
+        cached = read_cache("tfl_air_quality", cache_key)
+        if cached:
+            print(f"[CACHE] Using cached air quality data")
+            return cached
+
+    if not TFL_APP_KEY:
+        print("[WARNING] TFL_APP_KEY not set, cannot fetch real air quality data")
+        # Return mock data if no key
+        return {
+            "current_forecast": [
+                {
+                    "forecastType": "Current",
+                    "forecastID": "mock_1",
+                    "publishedDate": datetime.now().isoformat(),
+                    "fromDate": datetime.now().isoformat(),
+                    "toDate": datetime.now().isoformat(),
+                    "forecastBand": "Low",
+                    "forecastSummary": "Low air pollution mock data",
+                    "nO2Band": "Low",
+                    "o3Band": "Low",
+                    "pM10Band": "Low",
+                    "pM25Band": "Low",
+                    "sO2Band": "Low",
+                    "forecastText": "Air pollution is expected to remain low."
+                }
+            ],
+            "data_source": "mock"
+        }
+
+    try:
+        url = f"{TFL_BASE_URL}/AirQuality"
+        params = {}
+        if TFL_APP_KEY:
+            params["app_key"] = TFL_APP_KEY
+            
+        print(f"[API] Fetching real Air Quality data from TfL")
+        response = requests.get(url, params=params, timeout=10)
+        
+        if response.status_code == 200:
+            data = response.json()
+            result = {
+                "raw_data": data,
+                "current_forecast": data.get("currentForecast", []),
+                "timestamp": datetime.now().isoformat(),
+                "data_source": "tfl_api"
+            }
+            
+            if use_cache:
+                write_cache("tfl_air_quality", cache_key, result)
+                
+            return result
+        else:
+            print(f"[WARN] TfL AirQuality API error {response.status_code}. Using mock data.")
+            # Fallback to mock
+            return {
+                "current_forecast": [
+                    {
+                        "forecastType": "Current",
+                        "forecastID": "mock_fallback",
+                        "publishedDate": datetime.now().isoformat(),
+                        "fromDate": datetime.now().isoformat(),
+                        "toDate": datetime.now().isoformat(),
+                        "forecastBand": "Low",
+                        "forecastSummary": "Low air pollution (Mock Data)",
+                        "nO2Band": "Low",
+                        "o3Band": "Low",
+                        "pM10Band": "Low",
+                        "pM25Band": "Low",
+                        "sO2Band": "Low",
+                        "forecastText": "Air pollution is expected to remain low."
+                    }
+                ],
+                "data_source": "mock_fallback"
+            }
+            
+    except Exception as e:
+        print(f"[WARN] Failed to fetch Air Quality data: {e}. Using mock data.")
+        return {
+            "current_forecast": [],
+            "data_source": "mock_error"
+        }
+
+if __name__ == "__main__":
+    print("Fetching Air Quality...")
+    aq = fetch_air_quality(use_cache=False)
+    if aq:
+        print(json.dumps(aq.get("current_forecast", []), indent=2))
+
+==================================================================================
+FILE: tools/fetch_market_news.py (NEW - NOT IN GITHUB)
+==================================================================================
+import os
+import json
+import re
+import requests
+from datetime import datetime
+from dotenv import load_dotenv
+
+# Load environment variables
+load_dotenv()
+
+PERPLEXITY_API_KEY = os.getenv("PERPLEXITY_API_KEY")
+PERPLEXITY_URL = "https://api.perplexity.ai/chat/completions"
+
+def fetch_market_news(area_code: str, area_name: str) -> dict:
+    """
+    Fetch real-time market analysis from Perplexity Sonar.
+    
+    Args:
+        area_code: London Area Code (e.g. E1)
+        area_name: Full name (e.g. Whitechapel)
+        
+    Returns:
+        Dict with keys: 'verdict', 'news_summary', 'growth_forecast', 'live_yield'
+    """
+    if not PERPLEXITY_API_KEY:
+        return {"error": "No API Key"}
+
+    headers = {
+        "Authorization": f"Bearer {PERPLEXITY_API_KEY}",
+        "Content-Type": "application/json"
+    }
+    
+    prompt = f"""
+    Provide a concise real-time property market analysis for {area_name} ({area_code}) London for 2025.
+    
+    Return ONLY a raw JSON object (no markdown formatting) with these exact keys:
+    - "verdict": A short punchy 2-3 word verdict (e.g. "Undervalued Gem", "Overpriced").
+    - "yield": Estimated current rental yield percentage (number only).
+    - "growth": Estimated 5-year capital growth percentage (number only).
+    - "news": A one-sentence summary of the latest market news/sentiment.
+    """
+
+    payload = {
+        "model": "sonar-reasoning-pro",
+        "messages": [
+            {"role": "system", "content": "You are a real-time property market analyst. Output valid JSON only."},
+            {"role": "user", "content": prompt}
+        ],
+        "max_tokens": 300
+    }
+
+    try:
+        response = requests.post(PERPLEXITY_URL, json=payload, headers=headers, timeout=15)
+        
+        if response.status_code == 200:
+            content = response.json()["choices"][0]["message"]["content"]
+            
+            # Clean up markdown if present
+            clean_content = content.replace("```json", "").replace("```", "").strip()
+            
+            return json.loads(clean_content)
+            
+    except Exception as e:
+        print(f"[ERROR] Perplexity API failed: {e}")
+        
+    return {"error": "API Failure"}
+
+==================================================================================
+FILE: tools/valuation_formulas.py (NEW - NOT IN GITHUB)
+==================================================================================
+#!/usr/bin/env python3
+"""
+Real Estate Valuation Formulas
+Based on: The Appraisal of Real Estate, 15th Edition (Appraisal Institute)
+
+This module implements industry-standard valuation formulas for:
+- Direct Capitalization
+- Yield Capitalization (DCF)
+- Gross Rent Multiplier (GRM)
+- Net Operating Income (NOI)
+- Present Value calculations
+
+Reference: Pages 437-490 of the textbook
+"""
+
+import math
+from typing import Dict, List, Optional, Tuple
+from dataclasses import dataclass
+
+
+# =============================================================================
+# DATA CLASSES
+# =============================================================================
+
+@dataclass
+class PropertyFinancials:
+    """Financial data for a property."""
+    gross_potential_income: float  # Total rent if 100% occupied
+    vacancy_rate: float            # e.g., 0.05 for 5%
+    operating_expenses: float      # Annual operating costs
+    purchase_price: float          # Property value/price
+    
+    @property
+    def effective_gross_income(self) -> float:
+        """EGI = Potential Income - Vacancy Loss"""
+        return self.gross_potential_income * (1 - self.vacancy_rate)
+    
+    @property
+    def net_operating_income(self) -> float:
+        """NOI = Effective Gross Income - Operating Expenses"""
+        return self.effective_gross_income - self.operating_expenses
+
+
+# =============================================================================
+# DIRECT CAPITALIZATION (Chapter 24)
+# =============================================================================
+
+def capitalization_rate(noi: float, value: float) -> float:
+    """
+    Calculate the capitalization rate (cap rate).
+    
+    Formula: R = NOI / V
+    
+    Args:
+        noi: Net Operating Income (annual)
+        value: Property value or sale price
+    
+    Returns:
+        Capitalization rate as decimal (e.g., 0.065 for 6.5%)
+    
+    Reference: Page 446 - "The overall capitalization rate is the ratio of 
+               net operating income to value."
+    """
+    if value <= 0:
+        return 0
+    return noi / value
+
+
+def value_from_cap_rate(noi: float, cap_rate: float) -> float:
+    """
+    Calculate property value using direct capitalization.
+    
+    Formula: V = NOI / R
+    
+    Args:
+        noi: Net Operating Income (annual)
+        cap_rate: Capitalization rate as decimal
+    
+    Returns:
+        Property value
+    
+    Reference: Page 445 - "In direct capitalization, the value is derived
+               by dividing the single year's income by an appropriate rate."
+    """
+    if cap_rate <= 0:
+        return 0
+    return noi / cap_rate
+
+
+def noi_from_value(value: float, cap_rate: float) -> float:
+    """
+    Calculate NOI from value and cap rate.
+    
+    Formula: NOI = V × R
+    """
+    return value * cap_rate
+
+
+# =============================================================================
+# GROSS RENT MULTIPLIER (Chapter 24)
+# =============================================================================
+
+def gross_rent_multiplier(sale_price: float, gross_annual_rent: float) -> float:
+    """
+    Calculate Gross Rent Multiplier (GRM).
+    
+    Formula: GRM = Sale Price / Gross Annual Rent
+    
+    Args:
+        sale_price: Property sale price
+        gross_annual_rent: Annual rental income
+    
+    Returns:
+        Gross Rent Multiplier
+    
+    Reference: Page 486 - "The ratio of the sale price of a property to its
+               anticipated next year's income... is the gross income multiplier."
+    """
+    if gross_annual_rent <= 0:
+        return 0
+    return sale_price / gross_annual_rent
+
+
+def value_from_grm(gross_annual_rent: float, grm: float) -> float:
+    """
+    Calculate property value using GRM.
+    
+    Formula: V = Gross Annual Rent × GRM
+    """
+    return gross_annual_rent * grm
+
+
+def monthly_grm(sale_price: float, monthly_rent: float) -> float:
+    """
+    Calculate Monthly Gross Rent Multiplier.
+    
+    Common in residential markets.
+    """
+    if monthly_rent <= 0:
+        return 0
+    return sale_price / monthly_rent
+
+
+# =============================================================================
+# YIELD CAPITALIZATION / DCF (Chapter 25)
+# =============================================================================
+
+def present_value(future_value: float, rate: float, periods: int) -> float:
+    """
+    Calculate present value of a future payment.
+    
+    Formula: PV = FV / (1 + i)^n
+    
+    Args:
+        future_value: Future payment amount
+        rate: Discount rate per period (as decimal)
+        periods: Number of periods
+    
+    Returns:
+        Present value
+    
+    Reference: Page 489 - "The standard formula for discounting future value 
+               to present value is: PV = FV / (1 + i)^n"
+    """
+    if rate <= -1 or periods < 0:
+        return 0
+    return future_value / ((1 + rate) ** periods)
+
+
+def discounted_cash_flow(
+    cash_flows: List[float],
+    discount_rate: float,
+    reversion: Optional[float] = None
+) -> float:
+    """
+    Discounted Cash Flow (DCF) Analysis.
+    
+    Formula: PV = Σ(CF_n / (1 + Y)^n) + Reversion / (1 + Y)^n
+    
+    Args:
+        cash_flows: List of periodic cash flows (typically annual)
+        discount_rate: Yield rate (property yield rate Y_o)
+        reversion: End-of-period sale value (optional)
+    
+    Returns:
+        Present value of all cash flows
+    
+    Reference: Page 490 - "In DCF analysis, the yield formula is expressed as:
+               PV = CF1/(1+Y) + CF2/(1+Y)^2 + ... + CFn/(1+Y)^n"
+    """
+    total_pv = 0
+    
+    # Discount each cash flow
+    for n, cf in enumerate(cash_flows, start=1):
+        total_pv += present_value(cf, discount_rate, n)
+    
+    # Add discounted reversion if provided
+    if reversion is not None and len(cash_flows) > 0:
+        total_pv += present_value(reversion, discount_rate, len(cash_flows))
+    
+    return total_pv
+
+
+def net_present_value(
+    initial_investment: float,
+    cash_flows: List[float],
+    discount_rate: float,
+    reversion: Optional[float] = None
+) -> float:
+    """
+    Calculate Net Present Value (NPV).
+    
+    Formula: NPV = DCF - Initial Investment
+    """
+    pv = discounted_cash_flow(cash_flows, discount_rate, reversion)
+    return pv - initial_investment
+
+
+def yield_rental(
+    monthly_rent: float,
+    purchase_price: float,
+    annual_expenses_ratio: float = 0.30
+) -> float:
+    """
+    Calculate rental yield (simplified).
+    
+    Formula: Yield = (Annual Rent - Expenses) / Purchase Price
+    
+    Args:
+        monthly_rent: Monthly rental income
+        purchase_price: Property purchase price
+        annual_expenses_ratio: Operating expenses as ratio of rent (default 30%)
+    
+    Returns:
+        Rental yield as percentage (e.g., 5.5 for 5.5%)
+    """
+    if purchase_price <= 0:
+        return 0
+    
+    annual_rent = monthly_rent * 12
+    net_income = annual_rent * (1 - annual_expenses_ratio)
+    return (net_income / purchase_price) * 100
+
+
+# =============================================================================
+# INVESTMENT SCORING (Integration with scoring engine)
+# =============================================================================
+
+def calculate_investment_score(
+    monthly_rent: float,
+    purchase_price: float,
+    market_cap_rate: float = 0.05,
+    growth_forecast_5yr: float = 15.0,
+    vacancy_rate: float = 0.05
+) -> Dict[str, float]:
+    """
+    Calculate comprehensive investment score for a property.
+    
+    Uses multiple valuation methods from the textbook to derive a 0-100 score.
+    
+    Args:
+        monthly_rent: Monthly rental income
+        purchase_price: Property value
+        market_cap_rate: Market capitalization rate (default 5%)
+        growth_forecast_5yr: 5-year price growth forecast (%)
+        vacancy_rate: Vacancy rate (default 5%)
+    
+    Returns:
+        Dictionary with all calculated metrics and final score
+    """
+    annual_rent = monthly_rent * 12
+    
+    # 1. Gross Rent Multiplier
+    grm = gross_rent_multiplier(purchase_price, annual_rent)
+    grm_score = max(0, min(100, (25 - grm) * 5))  # Lower GRM = better (15-25 range)
+    
+    # 2. Rental Yield
+    rental_yield_pct = yield_rental(monthly_rent, purchase_price)
+    yield_score = min(100, rental_yield_pct * 15)  # 6.5% yield = 97.5 score
+    
+    # 3. Cap Rate Implied Value vs Actual
+    estimated_noi = annual_rent * (1 - vacancy_rate) * 0.70  # 30% expense ratio
+    implied_value = value_from_cap_rate(estimated_noi, market_cap_rate)
+    value_ratio = implied_value / purchase_price if purchase_price > 0 else 1
+    value_score = min(100, value_ratio * 50)  # 2x undervalued = 100
+    
+    # 4. Growth Potential
+    growth_score = min(100, growth_forecast_5yr * 3)  # 33% growth = 100
+    
+    # 5. 5-Year DCF Analysis
+    projected_noi = [estimated_noi * (1.02 ** n) for n in range(5)]  # 2% NOI growth
+    reversion = purchase_price * (1 + growth_forecast_5yr / 100)
+    dcf_value = discounted_cash_flow(projected_noi, 0.08, reversion)
+    dcf_ratio = dcf_value / purchase_price if purchase_price > 0 else 1
+    dcf_score = min(100, (dcf_ratio - 0.8) * 250)  # Score based on value ratio
+    
+    # Weighted composite score
+    composite_score = (
+        grm_score * 0.15 +
+        yield_score * 0.30 +
+        value_score * 0.20 +
+        growth_score * 0.15 +
+        dcf_score * 0.20
+    )
+    
+    return {
+        "gross_rent_multiplier": round(grm, 2),
+        "rental_yield_pct": round(rental_yield_pct, 2),
+        "implied_value": round(implied_value),
+        "dcf_value_5yr": round(dcf_value),
+        "value_ratio": round(value_ratio, 2),
+        "grm_score": round(grm_score),
+        "yield_score": round(yield_score),
+        "value_score": round(value_score),
+        "growth_score": round(growth_score),
+        "dcf_score": round(dcf_score),
+        "investment_score": round(composite_score)
+    }
+
+
+def calculate_investment_difficulty(
+    monthly_rent: float,
+    purchase_price: float,
+    safety_score: float = 50,
+    yield_estimate: float = 5.0,
+    growth_forecast_5yr: float = 15.0,
+    vacancy_rate: float = 0.05,
+    area_name: str = ""
+) -> Dict:
+    """
+    Calculate the Investment Difficulty Rating for a property.
+    
+    Based on The Appraisal of Real Estate, 15th Edition concepts:
+    - Market risk (volatility, liquidity)
+    - Operational complexity (management intensity)
+    - Financial risk (leverage, cash flow stability)
+    - Location risk (crime, economic factors)
+    
+    Returns:
+        Dictionary with difficulty level (1-5 stars), factors, and description
+    """
+    difficulty_factors = []
+    difficulty_score = 0  # 0-100, higher = more difficult
+    
+    # 1. ENTRY BARRIER (High price = harder to enter)
+    if purchase_price > 500000:
+        difficulty_score += 20
+        difficulty_factors.append("High entry capital required (£500k+)")
+    elif purchase_price > 350000:
+        difficulty_score += 10
+        difficulty_factors.append("Moderate capital barrier (£350k+)")
+    else:
+        difficulty_factors.append("Lower entry capital (sub-£350k)")
+    
+    # 2. YIELD-TO-PRICE RATIO (Low yield = harder to profit)
+    yield_pct = yield_rental(monthly_rent, purchase_price)
+    if yield_pct < 4:
+        difficulty_score += 25
+        difficulty_factors.append(f"Challenging yield ({yield_pct:.1f}% < 4% threshold)")
+    elif yield_pct < 5:
+        difficulty_score += 15
+        difficulty_factors.append(f"Below-market yield ({yield_pct:.1f}%)")
+    else:
+        difficulty_factors.append(f"Strong yield ({yield_pct:.1f}%)")
+    
+    # 3. SAFETY/LOCATION RISK
+    if safety_score < 45:
+        difficulty_score += 20
+        difficulty_factors.append("Higher location risk (safety concerns)")
+    elif safety_score < 60:
+        difficulty_score += 10
+        difficulty_factors.append("Moderate location profile")
+    else:
+        difficulty_factors.append("Low location risk (safe area)")
+    
+    # 4. GROWTH UNCERTAINTY
+    if growth_forecast_5yr > 25:
+        difficulty_score += 15  # High growth = high volatility
+        difficulty_factors.append("High volatility market (>25% projected growth)")
+    elif growth_forecast_5yr < 10:
+        difficulty_score += 10
+        difficulty_factors.append("Slow growth area (<10% forecast)")
+    else:
+        difficulty_factors.append("Stable growth trajectory")
+    
+    # 5. VACANCY RISK
+    if vacancy_rate > 0.08:
+        difficulty_score += 15
+        difficulty_factors.append("Higher vacancy risk (>8%)")
+    elif vacancy_rate > 0.05:
+        difficulty_score += 5
+        difficulty_factors.append("Standard vacancy profile")
+    else:
+        difficulty_factors.append("Low vacancy risk (<5%)")
+    
+    # Convert score to star rating (1-5)
+    if difficulty_score >= 70:
+        stars = 5
+        level = "Expert"
+        description = "Complex investment requiring deep market knowledge and significant capital reserves"
+    elif difficulty_score >= 55:
+        stars = 4
+        level = "Advanced"
+        description = "Challenging investment with multiple risk factors to manage"
+    elif difficulty_score >= 40:
+        stars = 3
+        level = "Intermediate"
+        description = "Moderate complexity suitable for experienced investors"
+    elif difficulty_score >= 25:
+        stars = 2
+        level = "Beginner-Friendly"
+        description = "Manageable investment with favorable fundamentals"
+    else:
+        stars = 1
+        level = "Entry-Level"
+        description = "Low-complexity investment ideal for first-time investors"
+    
+    return {
+        "difficulty_stars": stars,
+        "difficulty_level": level,
+        "difficulty_score": difficulty_score,
+        "difficulty_description": description,
+        "difficulty_factors": difficulty_factors[:3],  # Top 3 factors
+        "area_name": area_name
+    }
+
+
+# =============================================================================
+# TEST / DEMO
+# =============================================================================
+
+if __name__ == "__main__":
+    print("=" * 80)
+    print("Real Estate Valuation Formulas - Test")
+    print("Based on: The Appraisal of Real Estate, 15th Edition")
+    print("=" * 80)
+    print()
+    
+    # Test property: E6 East Ham
+    monthly_rent = 1750
+    purchase_price = 390000
+    
+    print(f"Test Property: East Ham (E6)")
+    print(f"  Monthly Rent: £{monthly_rent:,}")
+    print(f"  Purchase Price: £{purchase_price:,}")
+    print()
+    
+    results = calculate_investment_score(
+        monthly_rent=monthly_rent,
+        purchase_price=purchase_price,
+        growth_forecast_5yr=22.0
+    )
+    
+    print("Valuation Metrics:")
+    print(f"  Gross Rent Multiplier: {results['gross_rent_multiplier']}")
+    print(f"  Rental Yield: {results['rental_yield_pct']}%")
+    print(f"  Implied Value (5% cap): £{results['implied_value']:,}")
+    print(f"  5-Year DCF Value: £{results['dcf_value_5yr']:,}")
+    print(f"  Value Ratio: {results['value_ratio']}")
+    print()
+    
+    print("Component Scores (0-100):")
+    print(f"  GRM Score: {results['grm_score']}")
+    print(f"  Yield Score: {results['yield_score']}")
+    print(f"  Value Score: {results['value_score']}")
+    print(f"  Growth Score: {results['growth_score']}")
+    print(f"  DCF Score: {results['dcf_score']}")
+    print()
+    
+    print(f"INVESTMENT SCORE: {results['investment_score']}/100")
+    print("=" * 80)

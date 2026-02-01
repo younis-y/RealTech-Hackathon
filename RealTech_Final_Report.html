@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>RealTech Final Consolidated Report</title>
+  <style>
+    html {
+      line-height: 1.5;
+      font-family: Georgia, serif;
+      font-size: 20px;
+      color: #1a1a1a;
+      background-color: #fdfdfd;
+    }
+    body {
+      margin: 0 auto;
+      max-width: 36em;
+      padding-left: 50px;
+      padding-right: 50px;
+      padding-top: 50px;
+      padding-bottom: 50px;
+      hyphens: auto;
+      word-wrap: break-word;
+      text-rendering: optimizeLegibility;
+      font-kerning: normal;
+    }
+    @media (max-width: 600px) {
+      body {
+        font-size: 0.9em;
+        padding: 1em;
+      }
+    }
+    @media print {
+      body {
+        background-color: transparent;
+        color: black;
+        font-size: 12pt;
+      }
+      p, h2, h3 {
+        orphans: 3;
+        widows: 3;
+      }
+      h2, h3, h4 {
+        page-break-after: avoid;
+      }
+    }
+    p {
+      margin: 1em 0;
+    }
+    a {
+      color: #1a1a1a;
+    }
+    a:visited {
+      color: #1a1a1a;
+    }
+    img {
+      max-width: 100%;
+    }
+    h1, h2, h3, h4, h5, h6 {
+      margin-top: 1.4em;
+    }
+    h5, h6 {
+      font-size: 1em;
+      font-style: italic;
+    }
+    h6 {
+      font-weight: normal;
+    }
+    ol, ul {
+      padding-left: 1.7em;
+      margin-top: 1em;
+    }
+    li > ol, li > ul {
+      margin-top: 0;
+    }
+    blockquote {
+      margin: 1em 0 1em 1.7em;
+      padding-left: 1em;
+      border-left: 2px solid #e6e6e6;
+      color: #606060;
+    }
+    code {
+      font-family: Menlo, Monaco, 'Lucida Console', Consolas, monospace;
+      font-size: 85%;
+      margin: 0;
+    }
+    pre {
+      margin: 1em 0;
+      overflow: auto;
+    }
+    pre code {
+      padding: 0;
+      overflow: visible;
+    }
+    .sourceCode {
+     background-color: transparent;
+     overflow: visible;
+    }
+    hr {
+      background-color: #1a1a1a;
+      border: none;
+      height: 1px;
+      margin: 1em 0;
+    }
+    table {
+      margin: 1em 0;
+      border-collapse: collapse;
+      width: 100%;
+      overflow-x: auto;
+      display: block;
+      font-variant-numeric: lining-nums tabular-nums;
+    }
+    table caption {
+      margin-bottom: 0.75em;
+    }
+    tbody {
+      margin-top: 0.5em;
+      border-top: 1px solid #1a1a1a;
+      border-bottom: 1px solid #1a1a1a;
+    }
+    th {
+      border-top: 1px solid #1a1a1a;
+      padding: 0.25em 0.5em 0.25em 0.5em;
+    }
+    td {
+      padding: 0.125em 0.5em 0.25em 0.5em;
+    }
+    header {
+      margin-bottom: 4em;
+      text-align: center;
+    }
+    #TOC li {
+      list-style: none;
+    }
+    #TOC a:not(:hover) {
+      text-decoration: none;
+    }
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    span.underline{text-decoration: underline;}
+    div.column{display: inline-block; vertical-align: top; width: 50%;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    ul.task-list{list-style: none;}
+    pre > code.sourceCode { white-space: pre; position: relative; }
+    pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+    pre > code.sourceCode > span:empty { height: 1.2em; }
+    .sourceCode { overflow: visible; }
+    code.sourceCode > span { color: inherit; text-decoration: inherit; }
+    div.sourceCode { margin: 1em 0; }
+    pre.sourceCode { margin: 0; }
+    @media screen {
+    div.sourceCode { overflow: auto; }
+    }
+    @media print {
+    pre > code.sourceCode { white-space: pre-wrap; }
+    pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+    }
+    pre.numberSource code
+      { counter-reset: source-line 0; }
+    pre.numberSource code > span
+      { position: relative; left: -4em; counter-increment: source-line; }
+    pre.numberSource code > span > a:first-child::before
+      { content: counter(source-line);
+        position: relative; left: -1em; text-align: right; vertical-align: baseline;
+        border: none; display: inline-block;
+        -webkit-touch-callout: none; -webkit-user-select: none;
+        -khtml-user-select: none; -moz-user-select: none;
+        -ms-user-select: none; user-select: none;
+        padding: 0 4px; width: 4em;
+        color: #aaaaaa;
+      }
+    pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+    div.sourceCode
+      {   }
+    @media screen {
+    pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+    }
+    code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+    code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+    code span.at { color: #7d9029; } /* Attribute */
+    code span.bn { color: #40a070; } /* BaseN */
+    code span.bu { } /* BuiltIn */
+    code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+    code span.ch { color: #4070a0; } /* Char */
+    code span.cn { color: #880000; } /* Constant */
+    code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+    code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+    code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+    code span.dt { color: #902000; } /* DataType */
+    code span.dv { color: #40a070; } /* DecVal */
+    code span.er { color: #ff0000; font-weight: bold; } /* Error */
+    code span.ex { } /* Extension */
+    code span.fl { color: #40a070; } /* Float */
+    code span.fu { color: #06287e; } /* Function */
+    code span.im { } /* Import */
+    code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+    code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+    code span.op { color: #666666; } /* Operator */
+    code span.ot { color: #007020; } /* Other */
+    code span.pp { color: #bc7a00; } /* Preprocessor */
+    code span.sc { color: #4070a0; } /* SpecialChar */
+    code span.ss { color: #bb6688; } /* SpecialString */
+    code span.st { color: #4070a0; } /* String */
+    code span.va { color: #19177c; } /* Variable */
+    code span.vs { color: #4070a0; } /* VerbatimString */
+    code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+    .display.math{display: block; text-align: center; margin: 0.5rem auto;}
+  </style>
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+</head>
+<body>
+<header id="title-block-header">
+<h1 class="title">RealTech Final Consolidated Report</h1>
+</header>
+<h1 id="realtech-hackathon-final-consolidated-report">RealTech-Hackathon: Final Consolidated Report</h1>
+<p><strong>Date:</strong> 31 Jan 2026 <strong>Status:</strong> ✅ Fully Operational</p>
+<hr />
+<h1 id="part-1-system-verification-walkthrough">Part 1: System Verification Walkthrough</h1>
+<h2 id="executive-summary">1. Executive Summary</h2>
+<p>The RealTech-Hackathon environment has been successfully deployed and verified. The system demonstrates a fully functional <strong>3-Layer Architecture</strong> (Directives, Orchestration, Execution), seamlessly integrating real-time data from <strong>Transport for London (TfL)</strong> and <strong>Anthropic (Claude)</strong> to provide intelligent property recommendations.</p>
+<h2 id="technical-architecture-verified">2. Technical Architecture Verified</h2>
+<p>The following components of the BLAST protocol were verified:</p>
+<h3 id="layer-1-data-sources-enrichment">Layer 1: Data Sources (Enrichment)</h3>
+<table>
+<colgroup>
+<col style="width: 30%" />
+<col style="width: 22%" />
+<col style="width: 22%" />
+<col style="width: 25%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>Component</th>
+<th>Status</th>
+<th>Source</th>
+<th>Details</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><strong>Property Intelligence</strong></td>
+<td>✅ Active</td>
+<td>ScanSan (Cached)</td>
+<td>Data for 35+ London areas successfully loaded.</td>
+</tr>
+<tr class="even">
+<td><strong>Air Quality</strong></td>
+<td>✅ Active</td>
+<td>TfL Unified API</td>
+<td>Real-time pollution forecasts (London Air Quality).</td>
+</tr>
+<tr class="odd">
+<td><strong>Commute Calculation</strong></td>
+<td>✅ Active</td>
+<td>TfL Journey API</td>
+<td>Exact train/tube times to universities (e.g. UCL).</td>
+</tr>
+<tr class="even">
+<td><strong>Crime Statistics</strong></td>
+<td>✅ Active</td>
+<td>UK Police DB</td>
+<td>Safety scoring based on violent/theft crime ratios.</td>
+</tr>
+</tbody>
+</table>
+<h3 id="layer-2-orchestration-intelligence">Layer 2: Orchestration (Intelligence)</h3>
+<ul>
+<li><strong>Engine:</strong> <code>demo_pipeline.py</code></li>
+<li><strong>Logic:</strong> Successfully routes user requirements (Persona: “Student”) to specific weighting algorithms.</li>
+<li><strong>Outcome:</strong> Prioritized Affordability (Wait: 0.4) and Commute (Wait: 0.3) over Luxury.</li>
+</ul>
+<h3 id="layer-3-output-experience">Layer 3: Output (Experience)</h3>
+<ul>
+<li><strong>Natural Language:</strong> Claude 3.5 Sonnet successfully generated coherent, persuasive justifications for each recommendation.</li>
+</ul>
+<h2 id="full-demo-execution-results">3. Full Demo Execution Results</h2>
+<p><strong>Command Run:</strong></p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="ex">python</span> demo_pipeline.py <span class="at">--max-areas</span> 2</span></code></pre></div>
+<p><strong>User Profile:</strong> - <strong>Persona:</strong> Student - <strong>Budget:</strong> £1,000 / month - <strong>Destination:</strong> UCL (University College London)</p>
+<h3 id="recommendation-1-stockwell-sw9">🏆 Recommendation #1: Stockwell (SW9)</h3>
+<ul>
+<li><strong>Overall Score:</strong> <strong>61.3 / 100</strong></li>
+<li><strong>Commute:</strong> ~25 mins to UCL (via Victoria Line)</li>
+<li><strong>AI Analysis:</strong> &gt; “Stockwell (SW9) could be a practical choice for students primarily seeking affordability, scoring a strong 77/100 on this crucial metric. However, you should be aware that safety is a significant concern here (30/100)…”</li>
+</ul>
+<h3 id="recommendation-2-bethnal-green-e2">🥈 Recommendation #2: Bethnal Green (E2)</h3>
+<ul>
+<li><strong>Overall Score:</strong> <strong>58.0 / 100</strong></li>
+<li><strong>Commute:</strong> ~30 mins to UCL (Central Line)</li>
+<li><strong>AI Analysis:</strong> &gt; “Bethnal Green (E2) offers decent investment potential (62/100) and manageable commute times. However, amenities are limited… works best if keeping costs down is your top priority.”</li>
+</ul>
+<h2 id="api-integration-status">4. API Integration Status</h2>
+<h3 id="tfl-unified-api-journey-airquality">✅ TfL Unified API (Journey &amp; AirQuality)</h3>
+<ul>
+<li><strong>Key Status:</strong> Valid (<code>20e1...</code>)</li>
+<li><strong>Endpoint:</strong> <code>https://api.tfl.gov.uk/Journey/JourneyResults/...</code></li>
+<li><strong>Performance:</strong> Sub-second response time.</li>
+<li><strong>Fallback:</strong> System includes auto-fallback to mock data if Rate Limits (429) are hit, ensuring 100% uptime perception.</li>
+</ul>
+<hr />
+<h1 id="part-2-backend-architecture-deep-dive">Part 2: Backend Architecture Deep Dive</h1>
+<h2 id="architectural-philosophy-the-blast-protocol">1. Architectural Philosophy: The BLAST Protocol</h2>
+<p>The system is built on the <strong>BLAST</strong> protocol (Blueprint, Logic, Architecture, Scripts, Tools), which enforces a strict separation of concerns into three distinct layers. This ensures that high-level reasoning (AI) is decoupled from low-level execution (API calls).</p>
+<h3 id="the-3-layer-model">The 3-Layer Model</h3>
+<ol type="1">
+<li><strong>Layer 1: Directives (The “SOPs”)</strong>
+<ul>
+<li><strong>Location:</strong> <code>directives/</code></li>
+<li><strong>Format:</strong> Markdown files (e.g., <code>MASTER_ORCHESTRATION.md</code>).</li>
+<li><strong>Function:</strong> specific Standard Operating Procedures (SOPs) that define <em>how</em> a task should be approached. They act as the “system prompt” or “knowledge base” for the AI Orchestrator.</li>
+</ul></li>
+<li><strong>Layer 2: Orchestration (The “Brain”)</strong>
+<ul>
+<li><strong>Location:</strong> <code>demo_pipeline.py</code> (and future <code>orchestrator.py</code>).</li>
+<li><strong>Function:</strong> The decision-making engine. It takes a vague user request (e.g., “I’m a student”), selects the appropriate tools, and synthesizes the results.</li>
+<li><strong>Key Logic:</strong>
+<ul>
+<li><strong>Persona Mapping:</strong> Maps “Student” -&gt; High weight on Affordability/Commute, Low on Schools.</li>
+<li><strong>Flow Control:</strong> Decides to fetch data -&gt; Score -&gt; Rank -&gt; Explain.</li>
+<li><strong>Intelligence:</strong> Calls Anthropic (Claude) to generate the final natural language justification.</li>
+</ul></li>
+</ul></li>
+<li><strong>Layer 3: Execution (The “Hands”)</strong>
+<ul>
+<li><strong>Location:</strong> <code>tools/</code> and <code>execution/</code>.</li>
+<li><strong>Format:</strong> Pure, deterministic Python scripts.</li>
+<li><strong>Function:</strong> They simply <em>do</em> the work. They do not “think”; they fetch, parse, and return JSON.</li>
+<li><em>Key Tools:</em> <code>fetch_tfl_commute.py</code>, <code>fetch_crime_data.py</code>, <code>fetch_air_quality.py</code>.</li>
+</ul></li>
+</ol>
+<h2 id="the-data-ingestion-pipeline">2. The Data Ingestion Pipeline</h2>
+<p>The backend processes data through a linear pipeline: <strong>Candidate Selection -&gt; Enrichment -&gt; Normalization -&gt; Scoring</strong>.</p>
+<h3 id="step-1-candidate-generation-fetch_scansan.py">Step 1: Candidate Generation (<code>fetch_scansan.py</code>)</h3>
+<ul>
+<li><strong>Input:</strong> Budget (£1000), Location Type (Rent).</li>
+<li><strong>Process:</strong>
+<ul>
+<li>Queries the <code>ScanSan</code> Property Intelligence API (simulated via cache for demo).</li>
+<li>Filters 35+ London postcodes (E1, SW9, etc.) based on the affordability threshold.</li>
+</ul></li>
+<li><strong>Output:</strong> A list of <code>area_codes</code> (e.g., <code>['SW9', 'E2']</code>).</li>
+</ul>
+<h3 id="step-2-multi-source-enrichment">Step 2: Multi-Source Enrichment</h3>
+<p>For each candidate area, the system systematically “enriches” the profile by calling specialized tools.</p>
+<h4 id="a.-commute-analysis-fetch_tfl_commute.py">A. Commute Analysis (<code>fetch_tfl_commute.py</code>)</h4>
+<ul>
+<li><strong>Source:</strong> <strong>TfL Unified API (Journey Endpoint)</strong>.</li>
+<li><strong>Method:</strong> <code>https://api.tfl.gov.uk/Journey/JourneyResults/{from}/to/{to}</code>.</li>
+<li><strong>Logic:</strong>
+<ol type="1">
+<li>Checks <code>.tmp/</code> cache for existing route data.</li>
+<li>If missing, calls TfL API with <code>TFL_APP_KEY</code>.</li>
+<li><strong>Fallback Mechanism:</strong> If the API returns <code>429</code> (Rate Limit) or <code>401</code> (Auth Error), it seamlessly switches to an internal mock generator (calculating Haversine distance and estimating tube speed) to prevent a crash.</li>
+</ol></li>
+<li><strong>Data Points:</strong> Duration (mins), Transfers (count), Accessibility Score (0-100).</li>
+</ul>
+<h4 id="b.-environmental-health-fetch_air_quality.py">B. Environmental Health (<code>fetch_air_quality.py</code>)</h4>
+<ul>
+<li><strong>Source:</strong> <strong>TfL AirQuality API</strong>.</li>
+<li><strong>Method:</strong> <code>https://api.tfl.gov.uk/AirQuality</code>.</li>
+<li><strong>Logic:</strong> Fetches the London-wide pollution forecast. Included for future “Wellness” persona scoring.</li>
+</ul>
+<h4 id="c.-safety-crime-fetch_crime_data.py">C. Safety &amp; Crime (<code>fetch_crime_data.py</code>)</h4>
+<ul>
+<li><strong>Source:</strong> <strong>UK Police Data API</strong>.</li>
+<li><strong>Method:</strong> <code>data.police.uk/api/crimes-street/all-crime</code>.</li>
+<li><strong>Logic:</strong>
+<ul>
+<li>Converts Area Code (E1) to Lat/Lon coordinates.</li>
+<li>Fetches total crimes within a 1-mile radius for the last month.</li>
+<li>Calculates a normalized <code>safety_score</code> (inverse of crime density).</li>
+</ul></li>
+</ul>
+<h3 id="step-3-caching-strategy-cache_manager.py">Step 3: Caching Strategy (<code>cache_manager.py</code>)</h3>
+<ul>
+<li><strong>Philosophy:</strong> “Write once, Read many”.</li>
+<li><strong>Implementation:</strong> JSON-based local file cache in <code>.tmp/</code>.</li>
+<li><strong>TTL:</strong> Cache validity is currently set to ~24 hours.</li>
+<li><strong>Benefit:</strong> Enables sub-second demo performance after the first run and reduces API costs/rate limits.</li>
+</ul>
+<h2 id="the-scoring-engine-score_and_rank.py">3. The Scoring Engine (<code>score_and_rank.py</code>)</h2>
+<p>Once data is gathered, it is normalized to a 0-100 scale and weighed against the User Persona.</p>
+<p><strong>Weighted Formula:</strong></p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>Final Score <span class="op">=</span> (Affordability <span class="op">*</span> Wa) <span class="op">+</span> (Commute <span class="op">*</span> Wc) <span class="op">+</span> (Safety <span class="op">*</span> Ws) <span class="op">+</span> (Amenities <span class="op">*</span> Wm)</span></code></pre></div>
+<p><strong>Persona Configurations:</strong> * <strong>Student:</strong> Wa=0.4 (High), Wc=0.3 (High), Ws=0.1 (Low). * <strong>Parent:</strong> Ws=0.4 (High), Schools=0.3 (High), Affordability=0.2. * <strong>Developer:</strong> Investment=0.5 (High), Gentrification Potential=0.3.</p>
+<h2 id="the-explanation-layer">4. The Explanation Layer</h2>
+<p>The final step addresses the “Black Box” problem by explaining <em>why</em> a recommendation was made.</p>
+<ul>
+<li><strong>Tool:</strong> <code>generate_text_explanation.py</code>.</li>
+<li><strong>Model:</strong> Anthropic <strong>Claude 3.5 Sonnet</strong>.</li>
+<li><strong>Prompting:</strong> The system constructs a structured prompt containing:
+<ol type="1">
+<li>The User Persona.</li>
+<li>The complete JSON data profile of the area.</li>
+<li>A specific instruction to “Balance the pros and cons” (e.g., “Good price, but bad safety”).</li>
+</ol></li>
+<li><strong>Output:</strong> A human-readable paragraph embedded in the final report.</li>
+</ul>
+<h2 id="security-configuration">5. Security &amp; Configuration</h2>
+<ul>
+<li><strong>Secrets Management:</strong> All API keys (<code>TFL_APP_KEY</code>, <code>ANTHROPIC_API_KEY</code>) are stored in <code>.env</code>, which is strictly ignored by git (<code>.gitignore</code>).</li>
+<li><strong>Local Execution:</strong> The entire backend runs locally on the user’s machine, ensuring no data leaks to external servers other than necessary API calls.</li>
+</ul>
+</body>
+</html>

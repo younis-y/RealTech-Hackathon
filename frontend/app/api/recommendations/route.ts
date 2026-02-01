@@ -104,16 +104,22 @@ function parsePythonOutput(output: string): any[] {
       currentRec.factors[factorMatch[1]] = parseInt(factorMatch[2])
     }
 
-    // Parse strengths
-    const strengthMatch = line.match(/\[+\] Strengths:\s+(.+)/)
+    // Parse strengths - split by emoji prefixes, not commas
+    const strengthMatch = line.match(/\[[\+]\] Strengths:\s*(.+)/)
     if (strengthMatch && currentRec) {
-      currentRec.strengths = strengthMatch[1].split(',').map(s => s.trim())
+      const content = strengthMatch[1].trim()
+      // Split by emoji patterns (looking for emoji followed by text)
+      const parts = content.split(/(?=[\u{1F300}-\u{1F9FF}]|[✓✨⚡💰🏠📉📈🎯💎🛡️✅🏘️🎓📚👨‍👩‍👧🛒🍽️🏃])/u).filter(s => s.trim())
+      currentRec.strengths = parts.length > 0 ? parts.map(s => s.trim()) : [content]
     }
 
-    // Parse weaknesses
-    const weaknessMatch = line.match(/\[-\] Weaknesses:\s+(.+)/)
+    // Parse weaknesses - split by emoji prefixes, not commas
+    const weaknessMatch = line.match(/\[-\] Weaknesses:\s*(.+)/)
     if (weaknessMatch && currentRec) {
-      currentRec.weaknesses = weaknessMatch[1].split(',').map(s => s.trim())
+      const content = weaknessMatch[1].trim()
+      // Split by emoji patterns
+      const parts = content.split(/(?=[\u{1F300}-\u{1F9FF}]|[⏱️🚌📍💷📊⚠️📉🏷️⚖️🔒👁️🏫📝👶🛒🏪🌱])/u).filter(s => s.trim())
+      currentRec.weaknesses = parts.length > 0 ? parts.map(s => s.trim()) : [content]
     }
   }
 

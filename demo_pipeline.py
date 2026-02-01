@@ -16,6 +16,8 @@ from tools.fetch_tfl_commute import fetch_commute_data
 from tools.fetch_crime_data import fetch_crime_data
 from tools.fetch_schools import fetch_schools_data
 from tools.fetch_amenities import fetch_amenities_data
+from tools.fetch_air_quality import fetch_air_quality
+from tools.fetch_epc import get_area_epc_summary
 from tools.score_areas import rank_areas
 from tools.generate_text_explanation import generate_explanation
 
@@ -57,6 +59,8 @@ def enrich_area(area_code, destination=None):
     crime = fetch_crime_data(area_code)
     schools = fetch_schools_data(area_code)
     amenities = fetch_amenities_data(area_code)
+    air_quality = fetch_air_quality()
+    epc = get_area_epc_summary(area_code)
 
     return {
         "area_code": area_code,
@@ -64,7 +68,9 @@ def enrich_area(area_code, destination=None):
         "commute": commute or {},
         "crime": crime or {},
         "schools": schools or {},
-        "amenities": amenities or {}
+        "amenities": amenities or {},
+        "air_quality": air_quality or {},
+        "epc": epc or {}
     }
 
 
@@ -136,7 +142,7 @@ def run_demo(
     candidate_areas = get_candidate_areas(
         budget_max=budget_max,
         location_type=location_type,
-        affordability_threshold=60
+        affordability_threshold=20
     )
 
     print(f"\nFound {len(candidate_areas)} candidate areas")
