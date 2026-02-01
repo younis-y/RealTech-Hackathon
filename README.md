@@ -176,6 +176,8 @@ REDIS_URL=redis://localhost:6379
 
 *Live Demo: [https://github.com/younis-y/RealTech-Hackathon](https://github.com/younis-y/RealTech-Hackathon)*
 
+Gotta love the cracked-back case on the mobile – typical London student phone. :P
+
 ## API / CLI Reference
 ### API Endpoint
 **POST `/api/recommendations`**
