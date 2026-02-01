@@ -62,3 +62,9 @@ Thumbs.db
 .Spotlight-V100
 .Trashes
 data/
+
+# Data and Cache
+veo_cache/
+Property_Price_Data/
+video_generation_experiment_results.json
+frontend/veo_cache/

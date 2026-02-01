@@ -50,6 +50,63 @@ function generateFinancialData(rec: Recommendation): Recommendation {
   }
 }
 
+// Utility to strip trailing punctuation
+const cleanText = (text: string): string => {
+  return text.replace(/[,\.;:]\s*$/, '').trim()
+}
+
+// Reusable Insight Row Component
+function InsightRow({ emoji, title, subtitle }: { emoji: string; title: string; subtitle?: string }) {
+  return (
+    <div className="flex items-start gap-3 py-1">
+      {/* Icon Container: Fixed width, top-aligned */}
+      <div className="flex-shrink-0 w-6 h-6 flex items-center justify-center mt-0.5 text-lg">
+        {emoji}
+      </div>
+
+      {/* Text Column */}
+      <div className="flex-1 min-w-0 flex flex-col gap-1">
+        <span className="font-bold text-slate-900 text-sm leading-snug">
+          {cleanText(title)}
+        </span>
+        {subtitle && (
+          <span className="text-slate-500 text-xs font-normal leading-relaxed">
+            {cleanText(subtitle)}
+          </span>
+        )}
+      </div>
+    </div>
+  )
+}
+
+function InsightSection({ title, colorClass, items }: {
+  title: string,
+  colorClass: 'emerald' | 'amber',
+  items: { emoji: string; issue: string; action: string }[]
+}) {
+  const borderColor = colorClass === 'emerald' ? 'border-emerald-400' : 'border-amber-400'
+  const textColor = colorClass === 'emerald' ? 'text-emerald-700' : 'text-amber-700'
+  const bgColor = colorClass === 'emerald' ? 'bg-emerald-50/50' : 'bg-amber-50/50'
+
+  return (
+    <div className={`p-4 rounded-lg border-l-4 ${borderColor} ${bgColor}`}>
+      <h3 className={`text-xs font-bold uppercase tracking-widest mb-4 ${textColor}`}>
+        {title}
+      </h3>
+      <div className="space-y-4">
+        {items.map((item, i) => (
+          <InsightRow
+            key={i}
+            emoji={item.emoji}
+            title={item.issue}
+            subtitle={item.action}
+          />
+        ))}
+      </div>
+    </div>
+  )
+}
+
 export default function Results() {
   const router = useRouter()
   const [data, setData] = useState<ResultsData | null>(null)
@@ -365,76 +422,65 @@ export default function Results() {
                 </div>
               )}
 
-              {/* Strengths and Weaknesses - Fixed Icon Alignment */}
-              <div className="grid md:grid-cols-2 gap-4 mb-4">
-                {parseItems(rec.strengths).length > 0 && (
-                  <div className="border-l-2 border-emerald-400 pl-3 py-1">
-                    <p className="text-[10px] font-bold text-emerald-600 uppercase tracking-wider mb-3">Strengths</p>
-                    <div className="space-y-3">
-                      {parseItems(rec.strengths).map((item, i) => (
-                        <div key={i} className="flex items-start gap-3">
-                          {/* Icon: Fixed width, pinned to top with mt-0.5 */}
-                          <span className="flex-shrink-0 w-5 h-5 mt-0.5 text-base">{item.emoji}</span>
-                          <div className="text-sm min-w-0">
-                            <span className="font-semibold text-slate-900 block leading-snug">{item.issue}</span>
-                            {item.action && (
-                              <span className="text-slate-500 leading-snug text-xs block mt-1">{item.action}</span>
-                            )}
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
+              {/* Strengths and Weaknesses - Refactored */}
+              <div className="grid md:grid-cols-2 gap-6 mb-6">
+                {(parseItems(rec.strengths).length > 0) && (
+                  <InsightSection
+                    title="Strengths"
+                    colorClass="emerald"
+                    items={parseItems(rec.strengths)}
+                  />
                 )}
-                {parseItems(rec.weaknesses).length > 0 && (
-                  <div className="border-l-2 border-amber-400 pl-3 py-1">
-                    <p className="text-[10px] font-bold text-amber-600 uppercase tracking-wider mb-3">Considerations</p>
-                    <div className="space-y-3">
-                      {parseItems(rec.weaknesses).map((item, i) => (
-                        <div key={i} className="flex items-start gap-3">
-                          {/* Icon: Fixed width, pinned to top with mt-0.5 */}
-                          <span className="flex-shrink-0 w-5 h-5 mt-0.5 text-base">{item.emoji}</span>
-                          <div className="text-sm min-w-0">
-                            <span className="font-semibold text-slate-900 block leading-snug">{item.issue}</span>
-                            {item.action && (
-                              <span className="text-slate-500 leading-snug text-xs block mt-1">{item.action}</span>
-                            )}
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
+                {(parseItems(rec.weaknesses).length > 0) && (
+                  <InsightSection
+                    title="Considerations"
+                    colorClass="amber"
+                    items={parseItems(rec.weaknesses)}
+                  />
                 )}
               </div>
 
               {/* Video Generation Button */}
-              <div className="pt-3 border-t border-slate-100">
+              <div className="pt-4 mt-2 border-t border-slate-100 flex justify-start">
                 <button
                   onClick={() => videoStates[rec.rank] === 'ready'
                     ? handleDownloadVideo(rec.name)
                     : handleGenerateVideo(rec.rank, rec.name)}
                   disabled={videoStates[rec.rank] === 'generating'}
                   className={`
-                    w-full md:w-auto px-4 py-2 text-xs font-medium uppercase tracking-wider transition-all
+                    group relative flex items-center gap-3 px-6 py-3 rounded-lg font-bold text-white shadow-md transition-all duration-300
                     ${videoStates[rec.rank] === 'idle'
-                      ? 'bg-slate-900 text-white hover:bg-slate-700'
+                      ? 'bg-emerald-600 hover:bg-emerald-500 hover:scale-105 hover:shadow-lg hover:brightness-110'
                       : videoStates[rec.rank] === 'generating'
                         ? 'bg-slate-300 text-slate-500 cursor-wait'
-                        : 'bg-emerald-600 text-white hover:bg-emerald-700'
+                        : 'bg-emerald-800 hover:bg-emerald-900'
                     }
                   `}
                 >
                   {videoStates[rec.rank] === 'idle' && (
-                    <>🎬 Generate Walkthrough Video</>
+                    <>
+                      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-5 h-5">
+                        <path fillRule="evenodd" d="M9 4.5a.75.75 0 01.721.544l.813 2.846a3.75 3.75 0 002.576 2.576l2.846.813a.75.75 0 010 1.442l-2.846.813a3.75 3.75 0 00-2.576 2.576l-.813 2.846a.75.75 0 01-1.442 0l-.813-2.846a3.75 3.75 0 00-2.576-2.576l-2.846-.813a.75.75 0 010-1.442l2.846-.813a3.75 3.75 0 002.576-2.576l.813-2.846A.75.75 0 019 4.5zM9 15a.75.75 0 01.75.75v1.5h1.5a.75.75 0 010 1.5h-1.5v1.5a.75.75 0 01-1.5 0v-1.5h-1.5a.75.75 0 010-1.5h1.5v-1.5A.75.75 0 019 15z" clipRule="evenodd" />
+                      </svg>
+                      Generate Video Walkthrough
+                    </>
                   )}
                   {videoStates[rec.rank] === 'generating' && (
                     <span className="flex items-center justify-center gap-2">
-                      <span className="animate-spin h-3 w-3 border border-slate-500 border-t-transparent rounded-full"></span>
-                      Generating...
+                      <svg className="animate-spin h-5 w-5 text-slate-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                      </svg>
+                      Generating Preview...
                     </span>
                   )}
                   {videoStates[rec.rank] === 'ready' && (
-                    <>✓ Video Ready — Click to Download</>
+                    <>
+                      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-5 h-5">
+                        <path fillRule="evenodd" d="M2.25 12c0-5.385 4.365-9.75 9.75-9.75s9.75 4.365 9.75 9.75-4.365 9.75-9.75 9.75S2.25 17.385 2.25 12zm13.36-1.814a.75.75 0 10-1.22-.872l-3.236 4.53L9.53 12.22a.75.75 0 00-1.06 1.06l2.25 2.25a.75.75 0 001.14-.094l3.75-5.25z" clipRule="evenodd" />
+                      </svg>
+                      Video Ready — Download
+                    </>
                   )}
                 </button>
               </div>

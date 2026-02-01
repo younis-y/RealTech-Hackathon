@@ -19,7 +19,7 @@ from tools.fetch_amenities import fetch_amenities_data
 from tools.fetch_air_quality import fetch_air_quality
 from tools.fetch_epc import get_area_epc_summary
 from tools.score_areas import rank_areas
-from tools.generate_text_explanation import generate_explanation
+# from tools.generate_text_explanation import generate_explanation # Moved to inside function
 
 
 def print_header(title):
@@ -176,7 +176,13 @@ def run_demo(
         print_header("STEP 4: GENERATING EXPLANATIONS")
         print("Using Claude AI to generate natural language explanations...\n")
 
-        # Generate for top 3
+        # Lazy import to avoid dependency issues if not using explanations
+        try:
+            from tools.generate_text_explanation import generate_explanation
+        except ImportError:
+            print("Warning: generate_text_explanation not available.")
+            generate_explanation = lambda *args, **kwargs: "Explanation generation unavailable."
+
         for i, rec in enumerate(recommendations[:3], 1):
             print(f"[{i}/3] Generating explanation for {rec['area_name']}...")
             explanation = generate_explanation(rec, persona, format_type="medium")

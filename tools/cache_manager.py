@@ -13,7 +13,7 @@ from pathlib import Path
 from typing import Optional, Dict, Any
 
 
-CACHE_DIR = ".tmp"
+CACHE_DIR = "veo_cache"
 CACHE_VALIDITY = {
     "scansan_property": 24,      # hours
     "scansan_trends": 168,        # 7 days
@@ -37,7 +37,13 @@ def get_cache_path(cache_type: str, key: str) -> Path:
         Path object for cache file
     """
     cache_dir = Path(CACHE_DIR)
-    cache_dir.mkdir(exist_ok=True)
+    try:
+        cache_dir.mkdir(exist_ok=True)
+    except Exception as e:
+        print(f"[WARNING] Could not create cache directory: {e}")
+        # Return a path that handles failure gracefully? 
+        # For now, let it return the path, subsequent file ops will fail and be caught in read_cache/write_cache
+
 
     # Sanitize key for filename
     safe_key = key.replace("/", "_").replace("\\", "_").replace(" ", "_")

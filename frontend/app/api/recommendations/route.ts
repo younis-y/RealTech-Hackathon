@@ -45,7 +45,9 @@ export async function POST(request: NextRequest) {
 
 function executePython(args: string[]): Promise<string> {
   return new Promise((resolve, reject) => {
-    const python = spawn('python', args)
+    // Use venv python
+    const pythonPath = path.join(process.cwd(), '..', 'venv', 'bin', 'python')
+    const python = spawn(pythonPath, args)
     let output = ''
     let errorOutput = ''
 
