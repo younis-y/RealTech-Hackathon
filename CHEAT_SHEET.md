@@ -174,7 +174,7 @@ The result is a video over 1 minute long, which is consistent, but unfortunately
 
 
 ### Q: "How is this different from Rightmove?"
-**A:** *"Rightmove shows properties, we show neighborhoods. We're the intelligence layer before the listing layer."*
+**A:** *"Rightmove shows properties, we show neighborhoods. We're the intelligence layer before the listing layer."*, because of current limiation with ScanSan data set but, been told they working on this
 
 
 ### Q: "Can it work outside London?"
