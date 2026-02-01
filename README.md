@@ -1,5 +1,5 @@
 # Veo Housing Platform
-&gt; AI-powered property recommendation engine with persona-based scoring and intelligent multi-source data enrichment.
+&gt; AI-powered property recommendation engine with persona-based scoring and intelligent multi-source data enrichment, with additional video output
 
 ![Build Status](https://img.shields.io/badge/build-passing-brightgreen)
 ![Python](https://img.shields.io/badge/python-3.11%2B-blue)
@@ -8,7 +8,7 @@
 ![License](https://img.shields.io/badge/license-MIT-blue)
 
 ## Description
-Veo is an intelligent property recommendation system that helps users find the perfect London neighborhood based on their lifestyle and priorities. The platform leverages a sophisticated 3-layer AI orchestration architecture to synthesize live data from property intelligence APIs, transport networks, crime statistics, and education ratings—delivering personalized, data-driven area recommendations with transparent scoring and AI-generated explanations.
+Veo is an intelligent property recommendation system that helps users find the perfect London neighborhood based on their lifestyle and priorities. The platform leverages a sophisticated 3-layer AI orchestration architecture to synthesize live data from property intelligence APIs, transport networks, crime statistics, and education ratings—delivering personalized, data-driven area recommendations with transparent scoring and AI-generated explanations and tiktok output 
 
 ## Video
 
