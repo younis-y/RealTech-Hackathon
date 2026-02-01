@@ -21,7 +21,7 @@ https://github.com/user-attachments/assets/53a96134-f4ee-4d52-84e5-1251677074c3
 - **Students** seeking affordable areas with good transport links to universities.
 - **Parents** prioritizing school quality, safety, and family-friendly neighborhoods.
 - **Property Developers** looking for investment opportunities with high ROI potential.
-- **Climate warrior** seeking eco-friendly neighborhoods with green spaces and sustainable living options.
+- **Climate warrior** seeking eco-friendly neighborhoods with green spaces and sustainable living options "coming soon" because of lack of data available from ScanSan’s API
 
 ## Table of Contents
 - [Features](#features)
