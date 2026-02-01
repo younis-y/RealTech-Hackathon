@@ -92,27 +92,25 @@
 
 ## 🎥 DEMO FLOW (2-3 min)
 
+show these videos
 
-### Step 1: Homepage (30 sec)
-- Show **animated gradient** background
-- Click **Student** persona
-- Set budget: **£1,200/month**
-- Enter destination: **UCL**
-- Click **Get Recommendations**
+V1 is currently limited to generating 8‑second videos time to generated is 5mins, and there are text constraints. I am trying to create a video of around 1 minutes, but each 8‑second segment cannot display more than three lines of information. I need to increase the video duration to accommodate more content.
 
+[https://drive.google.com/file/d/1I1d_dozJMcM6U9rTvNL9fhsm3MDd8e7P/view?usp=sharing](https://drive.google.com/file/d/1I1d_dozJMcM6U9rTvNL9fhsm3MDd8e7P/view?usp=drive_link)
 
-### Step 2: Results (60 sec)
-- Point to **top recommendation** card
-- Highlight **composite score** (e.g., 87/100)
-- Show **metric bars** (affordability, commute, safety)
-- Point to **strengths/weaknesses**
-- Show **AI explanation**
+I created two videos, but the character appears as two different personas. I need to make the character consistent, using the last frame of each video to create the next one for visual consistency.
 
+https://drive.google.com/file/d/18IjLJCEsilUeHET7KdHTgqL3WTq_klC_/view?usp=sharing
 
-### Step 3: Persona Switch (30 sec)
-- Go back, select **Parent**
-- Show how **same areas rank differently**
-- Emphasize **personalization**
+V3 however not very gen z
+
+https://drive.google.com/file/d/1GoX1kctMmscY_Kuwcd5sPDPFZEMbwuJ_/view?usp=drive_link
+
+v4 I am keeping the style consistent and making it in a Gen Z TikTok format
+
+https://drive.google.com/file/d/1zHhM64GNymdazH_gprsFmE_f5ahEVcjj/view?usp=drive_link
+
+The result is a video over 1 minute long, which is consistent, but unfortunately there are still issues with the text being generated correctly in the video. The background is set in a Shoreditch-style environment, including areas like Brick Lane.
 
 
 **If Demo Fails:** Use screenshots in `frontend/screenshots/`
