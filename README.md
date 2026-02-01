@@ -15,7 +15,7 @@ Veo is an intelligent property recommendation system that helps users find the p
 https://github.com/user-attachments/assets/53a96134-f4ee-4d52-84e5-1251677074c3
 # Version34
 https://github.com/user-attachments/assets/7346e71d-2e66-434b-ae4a-7d3294b8ea75
-Gotta love the cracked-back case on the mobile – typical London student phone.
+### Gotta love the cracked-back case on the mobile – typical London student phone.
 
 
 
