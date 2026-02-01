@@ -10,7 +10,7 @@
 ## Description
 Veo is an intelligent property recommendation system that helps users find the perfect London neighborhood based on their lifestyle and priorities. The platform leverages a sophisticated 3-layer AI orchestration architecture to synthesize live data from property intelligence APIs, transport networks, crime statistics, and education ratings—delivering personalized, data-driven area recommendations with transparent scoring and AI-generated explanations and tiktok output 
 
-## Video
+## Video generated reports
 # Version1
 https://github.com/user-attachments/assets/53a96134-f4ee-4d52-84e5-1251677074c3
 # Version34
