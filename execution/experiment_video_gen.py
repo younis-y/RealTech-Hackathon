@@ -108,7 +108,7 @@ def run_experiment(areas: List[str], data_dir: str):
                 "scores": mock_score
             },
             "visual_prompt": f"Map of {mock_detail['name']} with overlay of price heatmaps. Cinematic drone shot style.",
-            "status": "Ready for Veo/Sora generation"
+            "status": "Ready for Domus/Sora generation"
         }
         
         results.append(video_package)

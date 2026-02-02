@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Veo Housing Recommendation Pipeline - Full Demo
+Domus Housing Recommendation Pipeline - Full Demo
 Demonstrates the complete end-to-end pipeline from user input to recommendations.
 """
 
@@ -129,7 +129,7 @@ def run_demo(
     start_time = datetime.now()
 
     print("\n" + "="*80)
-    print("  VEO HOUSING RECOMMENDATION PLATFORM - PIPELINE DEMO")
+    print("  DOMUS HOUSING RECOMMENDATION PLATFORM - PIPELINE DEMO")
     print("="*80)
 
     # Display input
@@ -213,7 +213,7 @@ def run_demo(
 if __name__ == "__main__":
     import argparse
 
-    parser = argparse.ArgumentParser(description="Veo Housing Recommendation Pipeline Demo")
+    parser = argparse.ArgumentParser(description="Domus Housing Recommendation Pipeline Demo")
     parser.add_argument("--persona", choices=["student", "parent", "developer"],
                         default="student", help="User persona")
     parser.add_argument("--budget", type=int, default=1000,

@@ -1,6 +1,6 @@
 # ✅ B.L.A.S.T. System Instantiated
 
-The B.L.A.S.T. protocol with A.N.T. 3-layer architecture has been successfully implemented for the Veo housing recommendation platform.
+The B.L.A.S.T. protocol with A.N.T. 3-layer architecture has been successfully implemented for the Domus housing recommendation platform.
 
 ---
 
@@ -52,7 +52,7 @@ Created in `architecture/`:
    - OpenStreetMap Overpass API
    - Google Maps APIs (fallback)
    - Anthropic Claude API
-   - Video generation APIs (Veo/Sora/LTX/Nano)
+   - Video generation APIs (Domus/Sora/LTX/Nano)
    - Complete auth methods, rate limits, error codes, caching per API
 
 3. **[06_error_handling.md](architecture/06_error_handling.md:1)** - Self-annealing

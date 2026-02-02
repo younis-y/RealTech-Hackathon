@@ -1,11 +1,11 @@
 #!/bin/bash
-# Veo Setup Script
+# Domus Setup Script
 # Initializes the 3-layer architecture environment
 
 set -e  # Exit on error
 
 echo "========================================="
-echo "Veo 3-Layer Architecture Setup"
+echo "Domus 3-Layer Architecture Setup"
 echo "========================================="
 echo ""
 

@@ -1,7 +1,7 @@
-# 🗺️ GEMINI.md - Veo Project Map
+# 🗺️ GEMINI.md - Domus Project Map
 ## Source of Truth | Last Updated: 2026-01-31 (Phase 2 Complete)
 
-> This is the Project Map for Veo, an explainable multi-persona housing recommendation platform built using the B.L.A.S.T. protocol and A.N.T. 3-layer architecture.
+> This is the Project Map for Domus, an explainable multi-persona housing recommendation platform built using the B.L.A.S.T. protocol and A.N.T. 3-layer architecture.
 
 ---
 
@@ -56,7 +56,7 @@ MEDIUM PRIORITY (Free APIs, nice-to-have):
 ✅ OpenStreetMap Overpass - Amenities (Free, no key)
 
 OPTIONAL (Video Generation - Phase 4):
-○ Google Veo API (GOOGLE_VEO_API_KEY) - Priority 1
+○ Google Domus API (GOOGLE_VEO_API_KEY) - Priority 1
 ○ OpenAI Sora API (OPENAI_API_KEY) - Priority 2
 ○ LTX Studio API (LTX_API_KEY) - Priority 3
 ○ Nano Video API (NANO_API_KEY) - Priority 4
@@ -516,7 +516,7 @@ interface VideoGenerationResponse {
   thumbnail_url: string;
   duration_seconds: number;
   script: string;
-  generation_api: "veo" | "sora" | "ltx" | "nano";
+  generation_api: "domus" | "sora" | "ltx" | "nano";
   generation_time_seconds: number;
   cost_usd: number;
   has_subtitles: boolean;
@@ -771,7 +771,7 @@ Planned Tools:
 ## 📊 File Structure Reference
 
 ```
-veo/
+domus/
 ├── gemini.md                    # ← YOU ARE HERE (Project Map)
 ├── BLAST.md                     # Protocol reference
 ├── .env                         # API keys (create from .env.template)

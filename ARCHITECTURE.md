@@ -1,8 +1,8 @@
-# System Architecture: Veo Housing Platform
+# System Architecture: Domus Housing Platform
 
 ## Overview
 
-The Veo Housing Platform is an AI-powered property recommendation engine designed to provide personalised, data-driven area recommendations for London property seekers. The system employs a unique 3-layer AI orchestration architecture that separates directive-based instructions (Layer 1) from intelligent routing and decision-making (Layer 2), and deterministic script execution (Layer 3). This architectural pattern ensures reliability, maintainability, and self-improvement capabilities whilst leveraging the probabilistic nature of large language models only where appropriate.
+The Domus Housing Platform is an AI-powered property recommendation engine designed to provide personalised, data-driven area recommendations for London property seekers. The system employs a unique 3-layer AI orchestration architecture that separates directive-based instructions (Layer 1) from intelligent routing and decision-making (Layer 2), and deterministic script execution (Layer 3). This architectural pattern ensures reliability, maintainability, and self-improvement capabilities whilst leveraging the probabilistic nature of large language models only where appropriate.
 
 The primary goal of the system is to automate the complex process of location research, providing users with data-driven insights tailored to their specific lifestyle personas (e.g., students, parents, or investors).
 
@@ -48,7 +48,7 @@ Markdown SOPs]
         TfL --> TfLAPI[TfL Unified API]
         Crime --> PoliceAPI[UK Police Data API]
         Schools --> GIAS[GIAS / Ofsted API]
-        Video --> VideoAI[Veo / Sora / LTX]
+        Video --> VideoAI[Domus / Sora / LTX]
     end
     
     ScanSanAPI --> Cache[(Redis Cache)]

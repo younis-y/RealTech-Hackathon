@@ -75,7 +75,7 @@ export default function Home() {
         {/* Header */}
         <div className="text-center mb-6">
           <h1 className="text-3xl font-bold text-slate-900 tracking-tight mb-1">
-            Veo
+            Domus
           </h1>
           <p className="text-slate-500 text-sm">
             AI-Powered London Property Matching
@@ -97,8 +97,8 @@ export default function Home() {
                     budget: 1500 // Reset to sensible rent default
                   })}
                   className={`py-3 text-sm font-semibold uppercase tracking-wider transition-all ${formData.locationType === 'rent'
-                      ? 'bg-slate-900 text-white'
-                      : 'bg-white text-slate-500 hover:bg-slate-50'
+                    ? 'bg-slate-900 text-white'
+                    : 'bg-white text-slate-500 hover:bg-slate-50'
                     }`}
                 >
                   Rent
@@ -111,8 +111,8 @@ export default function Home() {
                     budget: 450000 // Reset to sensible buy default
                   })}
                   className={`py-3 text-sm font-semibold uppercase tracking-wider transition-all ${formData.locationType === 'buy'
-                      ? 'bg-slate-900 text-white'
-                      : 'bg-white text-slate-500 hover:bg-slate-50'
+                    ? 'bg-slate-900 text-white'
+                    : 'bg-white text-slate-500 hover:bg-slate-50'
                     }`}
                 >
                   Buy
@@ -136,8 +136,8 @@ export default function Home() {
                     type="button"
                     onClick={() => setFormData({ ...formData, persona: p.id as FormData['persona'] })}
                     className={`py-3 px-2 border text-center transition-all ${formData.persona === p.id
-                        ? 'border-slate-900 bg-slate-50'
-                        : 'border-slate-200 hover:border-slate-300'
+                      ? 'border-slate-900 bg-slate-50'
+                      : 'border-slate-200 hover:border-slate-300'
                       }`}
                   >
                     <div className="text-xl mb-1">{p.icon}</div>
@@ -185,8 +185,8 @@ export default function Home() {
                     type="button"
                     onClick={() => setFormData({ ...formData, budget: val })}
                     className={`flex-1 py-1.5 text-xs border transition-all ${formData.budget === val
-                        ? 'border-slate-900 bg-slate-900 text-white'
-                        : 'border-slate-200 text-slate-500 hover:border-slate-300'
+                      ? 'border-slate-900 bg-slate-900 text-white'
+                      : 'border-slate-200 text-slate-500 hover:border-slate-300'
                       }`}
                   >
                     {formatCurrency(val)}
@@ -236,8 +236,8 @@ export default function Home() {
                           type="button"
                           onClick={() => setFormData({ ...formData, minBedrooms: num })}
                           className={`flex-1 py-2.5 text-sm font-medium transition-all ${formData.minBedrooms === num
-                              ? 'bg-slate-900 text-white'
-                              : 'bg-white text-slate-500 hover:bg-slate-50'
+                            ? 'bg-slate-900 text-white'
+                            : 'bg-white text-slate-500 hover:bg-slate-50'
                             }`}
                         >
                           {num}+
@@ -253,8 +253,8 @@ export default function Home() {
                       type="button"
                       onClick={() => setFormData({ ...formData, schoolProximity: !formData.schoolProximity })}
                       className={`w-full py-2.5 text-sm font-medium border transition-all ${formData.schoolProximity
-                          ? 'border-emerald-500 bg-emerald-50 text-emerald-700'
-                          : 'border-slate-200 bg-white text-slate-500'
+                        ? 'border-emerald-500 bg-emerald-50 text-emerald-700'
+                        : 'border-slate-200 bg-white text-slate-500'
                         }`}
                     >
                       {formData.schoolProximity ? '✓ Required' : 'Not Required'}
@@ -279,8 +279,8 @@ export default function Home() {
                           type="button"
                           onClick={() => setFormData({ ...formData, targetYield: num })}
                           className={`flex-1 py-2.5 text-sm font-medium transition-all ${formData.targetYield === num
-                              ? 'bg-slate-900 text-white'
-                              : 'bg-white text-slate-500 hover:bg-slate-50'
+                            ? 'bg-slate-900 text-white'
+                            : 'bg-white text-slate-500 hover:bg-slate-50'
                             }`}
                         >
                           {num}%+
@@ -340,7 +340,7 @@ export default function Home() {
         <div className="mt-8 p-4 bg-white border border-slate-200">
           <p className="text-[10px] text-slate-400 uppercase tracking-wider mb-1">Did you know?</p>
           <p className="text-xs text-slate-600">
-            23-24 Leinster Gardens in Bayswater looks like two grand terraced houses — but they're fake!
+            23-24 Leinster Gardens in Bayswater looks like two grand terraced houses, but they're fake!
             Just 5-foot thick brick facades built in the 1860s to hide Underground ventilation shafts.
             The windows are painted on!
           </p>

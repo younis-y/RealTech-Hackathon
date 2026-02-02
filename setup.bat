@@ -1,9 +1,9 @@
 @echo off
-REM Veo Setup Script for Windows
+REM Domus Setup Script for Windows
 REM Initializes the 3-layer architecture environment
 
 echo =========================================
-echo Veo 3-Layer Architecture Setup
+echo Domus 3-Layer Architecture Setup
 echo =========================================
 echo.
 

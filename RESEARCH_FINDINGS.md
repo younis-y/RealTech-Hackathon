@@ -1,4 +1,4 @@
-# Research Findings: Modern Serverless Architecture for Veo Platform
+# Research Findings: Modern Serverless Architecture for Domus Platform
 
 **Researcher**: Data & Strategy Lead  
 **Date**: 2026-01-31  
@@ -9,7 +9,7 @@
 
 ## Executive Summary
 
-This document provides research findings for modernizing the Veo Housing Platform backend infrastructure. The focus is on serverless-friendly, production-ready libraries and services that integrate seamlessly with Next.js 14, Modal, and TypeScript.
+This document provides research findings for modernizing the Domus Housing Platform backend infrastructure. The focus is on serverless-friendly, production-ready libraries and services that integrate seamlessly with Next.js 14, Modal, and TypeScript.
 
 **Key Recommendations**:
 1. **Serverless Deployment**: Modal + Vercel Edge for hybrid architecture
@@ -43,7 +43,7 @@ This document provides research findings for modernizing the Veo Housing Platfor
 # modal_config.py enhancement
 import modal
 
-stub = modal.Stub("veo-housing-platform")
+stub = modal.Stub("domus-housing-platform")
 
 # Container image with all dependencies
 image = modal.Image.debian_slim().pip_install_from_requirements("requirements.txt")
@@ -401,7 +401,7 @@ export class Logger {
     message: string,
     metadata: Record<string, any> = {}
   ) {
-    await axiom.ingest('veo-platform', [{
+    await axiom.ingest('domus-platform', [{
       _time: new Date().toISOString(),
       level,
       message,
@@ -496,8 +496,8 @@ export async function POST(request: Request) {
 import { Inngest } from 'inngest';
 
 export const inngest = new Inngest({ 
-  name: 'Veo Platform',
-  id: 'veo-platform'
+  name: 'Domus Platform',
+  id: 'domus-platform'
 });
 
 // Define events
@@ -758,7 +758,7 @@ import { generateOpenApiDocument } from '@anatine/zod-openapi';
 
 export const openApiSpec = generateOpenApiDocument({
   info: {
-    title: 'Veo Housing Platform API',
+    title: 'Domus Housing Platform API',
     version: '1.0.0'
   },
   servers: [{ url: '/api' }],
@@ -882,7 +882,7 @@ export function validateSecrets() {
 ```typescript
 // frontend/middleware.ts
 const ALLOWED_ORIGINS = [
-  'https://veo-platform.vercel.app',
+  'https://domus-platform.vercel.app',
   'http://localhost:3000'  // Dev only
 ];
 
@@ -1086,7 +1086,7 @@ export default function () {
   });
 
   const response = http.post(
-    'https://veo-platform.vercel.app/api/recommendations',
+    'https://domus-platform.vercel.app/api/recommendations',
     payload,
     { headers: { 'Content-Type': 'application/json' } }
   );

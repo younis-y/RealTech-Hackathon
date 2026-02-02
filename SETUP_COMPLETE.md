@@ -1,12 +1,12 @@
 # ✅ 3-Layer Architecture Setup Complete
 
-The Veo housing recommendation platform has been successfully instantiated with the 3-layer architecture from Agents.md!
+The Domus housing recommendation platform has been successfully instantiated with the 3-layer architecture from Agents.md!
 
 ## 📦 What Was Created
 
 ### Directory Structure
 ```
-veo/
+domus/
 ├── directives/              # ✅ Layer 1: WHAT to do
 │   ├── MASTER_ORCHESTRATION.md          # Main orchestration guide
 │   ├── scansan_property_intelligence.md  # ScanSan API directive
@@ -86,7 +86,7 @@ The system automatically improves when errors occur:
 - [x] Enrichment APIs integrated (TfL, crime, schools, amenities)
 - [x] Transparent factor breakdowns
 - [x] Natural language explanations via LLMs
-- [x] Video generation pipeline (Veo/Sora/LTX/Nano)
+- [x] Video generation pipeline (Domus/Sora/LTX/Nano)
 - [x] Persona-specific scoring weights
 - [x] Clear trade-off analysis
 
@@ -176,7 +176,7 @@ AI: [Orchestrates the following]
     2. Calls generate_explanation.py with format="video_script"
     3. Generates map with Google Maps Static API
     4. Creates score card overlays
-    5. Calls generate_video.py (tries Veo → Sora → LTX → Nano)
+    5. Calls generate_video.py (tries Domus → Sora → LTX → Nano)
     6. Returns video URL
     7. "Your explainer video is ready: [URL]"
 ```

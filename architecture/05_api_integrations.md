@@ -364,7 +364,7 @@ message = client.messages.create(
 
 ## Video Generation APIs
 
-### Google Veo (Priority 1)
+### Google Domus (Priority 1)
 
 **Status**: Beta access required
 **Cost**: ~$0.10-0.30 per video

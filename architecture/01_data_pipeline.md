@@ -479,7 +479,7 @@ Expected output:
 
 ## Summary
 
-The data pipeline is the backbone of the Veo platform. It follows the **Data-First Rule**: all schemas are defined before implementation (see gemini.md), ensuring type safety and predictability.
+The data pipeline is the backbone of the Domus platform. It follows the **Data-First Rule**: all schemas are defined before implementation (see gemini.md), ensuring type safety and predictability.
 
 **Key Principles**:
 1. **Parallel where possible** (Stage 3)

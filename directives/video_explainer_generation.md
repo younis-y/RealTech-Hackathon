@@ -1,7 +1,7 @@
 # Video Explainer Generation Directive
 
 ## Goal
-Generate 30-60 second explainer videos for top property/area recommendations using video AI APIs (Veo/Sora/LTX/Nano), combining map visualizations, key stats, and persona-specific narratives.
+Generate 30-60 second explainer videos for top property/area recommendations using video AI APIs (Domus/Sora/LTX/Nano), combining map visualizations, key stats, and persona-specific narratives.
 
 ## Inputs
 - **area_data**: Full recommendation object from scoring engine
@@ -45,8 +45,8 @@ For students who want easy commutes and great weekend options, Shoreditch is a t
 
 ### 3. Video Generation API Selection
 Try APIs in order of availability:
-1. **Google Veo** (preferred for quality)
-2. **OpenAI Sora** (if Veo unavailable)
+1. **Google Domus** (preferred for quality)
+2. **OpenAI Sora** (if Domus unavailable)
 3. **LTX Studio** (fallback)
 4. **Nano** (fast, lower quality backup)
 
@@ -73,7 +73,7 @@ JSON structure:
   "thumbnail_url": "https://cdn.example.com/thumbnails/E1_6AN.jpg",
   "duration_seconds": 45,
   "script": "Let's look at Shoreditch...",
-  "generation_api": "veo",
+  "generation_api": "domus",
   "generation_time_seconds": 127,
   "cost_usd": 0.15,
   "has_subtitles": true,
@@ -83,7 +83,7 @@ JSON structure:
 
 ## Edge Cases & Learnings
 - **API costs**: Video generation is expensive
-  - Veo: ~$0.10-0.30 per video
+  - Domus: ~$0.10-0.30 per video
   - Sora: ~$0.20-0.50 per video
   - Only generate on user request, not automatically
   - Cache generated videos for 30 days
@@ -98,7 +98,7 @@ JSON structure:
 - **Accessibility**: Always include subtitles (legal requirement in many jurisdictions)
 - **Mobile optimization**: Provide 9:16 vertical version for mobile users
 - **Rate limits**:
-  - Veo: 10 videos/day in beta
+  - Domus: 10 videos/day in beta
   - Sora: 50 videos/month on paid tier
   - Implement queueing system if demand high
 

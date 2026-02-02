@@ -11,11 +11,11 @@ that existed locally before pulling updates from GitHub.
 ==================================================================================
 FILE: ARCHITECTURE.md
 ==================================================================================
-# Veo System Architecture 🏗️
+# Domus System Architecture 🏗️
 
 ## 1. High-Level Design: The "3-Layer Pattern"
 
-Veo uses a novel **3-Layer AI Orchestration Architecture** to balance the intelligence of LLMs with the reliability of code.
+Domus uses a novel **3-Layer AI Orchestration Architecture** to balance the intelligence of LLMs with the reliability of code.
 
 ### Layer 1: Directives (The "SOPs")
 - **What**: Text-based Standard Operating Procedures (Markdown files).
@@ -39,7 +39,7 @@ Veo uses a novel **3-Layer AI Orchestration Architecture** to balance the intell
 
 ## 2. Deep Market Analysis Engine
 
-Veo goes beyond simple listings by generating "Market Verdicts".
+Domus goes beyond simple listings by generating "Market Verdicts".
 
 ### Data Sources
 1.  **Static Reality**: Hardcoded lookup table of ~20 key London postcodes with Q4 2024 / Q1 2025 estimated stats (Rent, Price, Growth).
@@ -95,7 +95,7 @@ For local development, we run a hybrid model:
 ==================================================================================
 FILE: README.md
 ==================================================================================
-# Veo Housing Platform 🧠🏘️
+# Domus Housing Platform 🧠🏘️
 
 > **Find your perfect London neighborhood in minutes, not weeks.**
 > AI-powered property recommendation engine with persona-based scoring and intelligent multi-source data enrichment.
@@ -107,7 +107,7 @@ FILE: README.md
 
 ## 🚀 Overview
 
-Veo solves the problem of "analysis paralysis" in the London property market. Instead of browsing thousands of individual listings, Veo recommends **neighborhoods** that fit your lifestyle.
+Domus solves the problem of "analysis paralysis" in the London property market. Instead of browsing thousands of individual listings, Domus recommends **neighborhoods** that fit your lifestyle.
 
 It uses a unique **3-Layer AI Architecture** to orchestrate authoritative data from **ScanSan**, **TfL**, **UK Police**, and **Ofsted**, producing highly personalized recommendations for Students, Parents, and Investors.
 
@@ -200,7 +200,7 @@ FILE: demo_pipeline.py
 ==================================================================================
 #!/usr/bin/env python3
 """
-Veo Housing Recommendation Pipeline - Full Demo
+Domus Housing Recommendation Pipeline - Full Demo
 Demonstrates the complete end-to-end pipeline from user input to recommendations.
 """
 
@@ -332,7 +332,7 @@ def run_demo(
         sys.stdout = sys.stderr
 
     print("\n" + "="*80)
-    print("  VEO HOUSING RECOMMENDATION PLATFORM - PIPELINE DEMO")
+    print("  DOMUS HOUSING RECOMMENDATION PLATFORM - PIPELINE DEMO")
     print("="*80)
 
     # Display input
@@ -430,7 +430,7 @@ def run_demo(
 if __name__ == "__main__":
     import argparse
 
-    parser = argparse.ArgumentParser(description="Veo Housing Recommendation Pipeline Demo")
+    parser = argparse.ArgumentParser(description="Domus Housing Recommendation Pipeline Demo")
     parser.add_argument("--persona", choices=["student", "parent", "developer"],
                         default="student", help="User persona")
     parser.add_argument("--budget", type=int, default=1000,
@@ -618,7 +618,7 @@ export default function Home() {
         {/* Header */}
         <div className="text-center mb-12">
           <h1 className="text-5xl font-bold text-gray-900 mb-4">
-            Veo
+            Domus
           </h1>
           <p className="text-xl text-gray-600">
             {isDeveloper
@@ -1139,7 +1139,7 @@ export default function Results() {
 FILE: frontend/package.json
 ==================================================================================
 {
-  "name": "veo-frontend",
+  "name": "domus-frontend",
   "version": "0.1.0",
   "private": true,
   "scripts": {
@@ -1213,13 +1213,13 @@ FILE: frontend/tsconfig.json
 FILE: setup.sh
 ==================================================================================
 #!/bin/bash
-# Veo Setup Script
+# Domus Setup Script
 # Initializes the 3-layer architecture environment
 
 set -e  # Exit on error
 
 echo "========================================="
-echo "Veo 3-Layer Architecture Setup"
+echo "Domus 3-Layer Architecture Setup"
 echo "========================================="
 echo ""
 
@@ -2827,7 +2827,7 @@ FILE: DEV_GUIDE.md (NEW - NOT IN GITHUB)
 ==================================================================================
 # Developer Guide 👩‍💻👨‍💻
 
-Welcome to the Veo engineering team! This guide covers setup, testing, and contribution.
+Welcome to the Domus engineering team! This guide covers setup, testing, and contribution.
 
 ## 1. Development Environment
 

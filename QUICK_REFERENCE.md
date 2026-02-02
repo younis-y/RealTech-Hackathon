@@ -89,7 +89,7 @@ areas with infrastructure development."
 ## 📁 Directory Structure
 
 ```
-veo/
+domus/
 ├── directives/          # What to do (SOPs)
 ├── execution/           # How to do it (Python scripts)
 ├── .tmp/               # Temporary data (regenerable)
@@ -157,7 +157,7 @@ When errors occur:
 | ScanSan | 100/hour | 1000/hour | £0.01-0.05 |
 | TfL | 500/min | 5000/min | Free |
 | Claude API | N/A | Pay-as-go | £0.003/explanation |
-| Google Veo | Beta | Limited | £0.10-0.30/video |
+| Google Domus | Beta | Limited | £0.10-0.30/video |
 | Crime/Schools | Unlimited | N/A | Free |
 
 ## 📚 Key Files to Read
@@ -179,7 +179,7 @@ When errors occur:
 ## 🎬 Video Generation Options
 
 Priority order (AI tries in sequence):
-1. Google Veo (best quality, £0.10-0.30)
+1. Google Domus (best quality, £0.10-0.30)
 2. OpenAI Sora (good quality, £0.20-0.50)
 3. LTX Studio (moderate, £0.10)
 4. Nano (fast/cheap, £0.05)

@@ -1,4 +1,4 @@
-# Backend Implementation Plan - Veo Housing Platform
+# Backend Implementation Plan - Domus Housing Platform
 
 **Owner**: Builder (Functionality & Logic Lead)  
 **Last Updated**: 2026-01-31  
@@ -8,7 +8,7 @@
 
 ## Overview
 
-This document tracks the backend implementation for the Veo Housing Recommendation Platform. The backend focuses on building robust API routes, state management, data processing logic, and serverless infrastructure using Modal.
+This document tracks the backend implementation for the Domus Housing Recommendation Platform. The backend focuses on building robust API routes, state management, data processing logic, and serverless infrastructure using Modal.
 
 ## Architecture Principles
 

@@ -1,6 +1,6 @@
-# 🏠 Veo Developer Guide
+# 🏠 Domus Developer Guide
 
-> Complete setup, development workflow, and contribution guidelines for the Veo Housing Platform
+> Complete setup, development workflow, and contribution guidelines for the Domus Housing Platform
 
 ---
 

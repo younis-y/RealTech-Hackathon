@@ -40,7 +40,7 @@ Perplexity + Claude APIs for generating faithful natural‑language explanations
 
 
 
-Veo / Sora / LTX / Nano video APIs for short explainer videos.
+Domus / Sora / LTX / Nano video APIs for short explainer videos.
 
 
 
@@ -144,7 +144,7 @@ Convert structured factor scores into concise, persona‑specific natural‑lang
 
 
 
-Use video generation APIs (Veo/Sora/LTX/Nano) to:
+Use video generation APIs (Domus/Sora/LTX/Nano) to:
 
 
 

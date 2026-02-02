@@ -1,8 +1,8 @@
 # 00 Master System Architecture
-## Veo Housing Recommendation Platform
+## Domus Housing Recommendation Platform
 
 ### Purpose
-Technical specification for the complete Veo system using B.L.A.S.T. protocol and A.N.T. 3-layer architecture.
+Technical specification for the complete Domus system using B.L.A.S.T. protocol and A.N.T. 3-layer architecture.
 
 ---
 
@@ -146,7 +146,7 @@ Output (JSON + web UI + optional video)
 
 ### Video Generation APIs (Priority Order)
 
-1. **Google Veo** (preferred, best quality)
+1. **Google Domus** (preferred, best quality)
 2. **OpenAI Sora** (fallback)
 3. **LTX Studio** (secondary fallback)
 4. **Nano** (fast/cheap last resort)

@@ -1,4 +1,4 @@
-# 🎯 VEO PITCH CHEAT SHEET - RealTech Hackathon 2026
+# 🎯 DOMUS PITCH CHEAT SHEET - RealTech Hackathon 2026
 
 
 ---
@@ -220,7 +220,7 @@ The result is a video over 1 minute long, which is consistent, but unfortunately
 ## 🎯 CLOSING ASK (30 sec)
 
 
-> "Veo is more than a search tool - it's an **intelligent decision companion** for the biggest financial decision most people make.
+> "Domus is more than a search tool - it's an **intelligent decision companion** for the biggest financial decision most people make.
 >
 > **We're looking for:**
 > - Feedback from judges and experts

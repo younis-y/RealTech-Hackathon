@@ -1,4 +1,4 @@
-# Veo Housing Platform
+# Domus Housing Platform
 ## Hackathon Presentation Deck
 
 
@@ -8,7 +8,7 @@
 ## 1️⃣ TITLE SLIDE
 
 
-**Veo**
+**Domus**
 *AI-Powered Property Intelligence*
 
 
@@ -61,15 +61,15 @@
 
 ---
 
-## 3️⃣ OUR SOLUTION: VEO
+## 3️⃣ OUR SOLUTION: DOMUS
 
 ### The Name
 
-**Veo** = Latin for "I see" — representing clarity and vision in finding the perfect home
+**Domus** = Latin for "I see" — representing clarity and vision in finding the perfect home
 
 ### What It Does
 
-Veo is an AI-powered property intelligence platform that synthesizes data from **5+ authoritative sources** to deliver personalized London neighborhood recommendations.
+Domus is an AI-powered property intelligence platform that synthesizes data from **5+ authoritative sources** to deliver personalized London neighborhood recommendations.
 
 ---
 
@@ -142,7 +142,7 @@ Veo is an AI-powered property intelligence platform that synthesizes data from *
 
 **Step 2: Ask or Explore**
 - Use natural language search OR browse our curated neighborhood guides
-- Veo's AI analyzes 1000+ data points in seconds
+- Domus's AI analyzes 1000+ data points in seconds
 
 **Step 3: Get Personalized Recommendations**
 - See your top 5 matched neighborhoods with match scores
@@ -189,7 +189,7 @@ Veo is an AI-powered property intelligence platform that synthesizes data from *
 
 **Query:** "I'm a UCL student with £700/month budget. Where should I live?"
 
-**Veo's Response:**
+**Domus's Response:**
 1. **Finsbury Park** (Match: 92%) — 15-min to UCL, vibrant nightlife, £650/month avg
 2. **Kentish Town** (Match: 89%) — 10-min to UCL, trendy cafes, £720/month avg
 3. **Archway** (Match: 85%) — 20-min to UCL, green spaces, £620/month avg
@@ -200,7 +200,7 @@ Veo is an AI-powered property intelligence platform that synthesizes data from *
 
 **Query:** "Safe neighborhood with top schools and parks, under £500k"
 
-**Veo's Response:**
+**Domus's Response:**
 1. **Richmond** (Match: 94%) — Outstanding schools, Thames views, low crime
 2. **Ealing** (Match: 90%) — Family-friendly, excellent transport, parks
 3. **Kingston upon Thames** (Match: 87%) — Suburban feel, good schools, riverside
@@ -211,7 +211,7 @@ Veo is an AI-powered property intelligence platform that synthesizes data from *
 
 **Query:** "Where's the next Shoreditch? High growth potential under £400k"
 
-**Veo's Response:**
+**Domus's Response:**
 1. **Walthamstow** (Match: 91%) — Crossrail coming, 15% price growth last 2 years
 2. **Deptford** (Match: 88%) — Regeneration zone, creative hub emerging
 3. **Tottenham** (Match: 85%) — Stadium-driven development, affordable entry
@@ -223,8 +223,8 @@ Veo is an AI-powered property intelligence platform that synthesizes data from *
 ## 8️⃣ IMPACT & METRICS
 
 ### Time Saved
-- **Before Veo:** 2-4 weeks of research across 10+ websites
-- **With Veo:** 5-10 minutes to get actionable recommendations
+- **Before Domus:** 2-4 weeks of research across 10+ websites
+- **With Domus:** 5-10 minutes to get actionable recommendations
 - **Impact:** 95% time reduction
 
 ### Decision Confidence
@@ -258,9 +258,9 @@ Veo is an AI-powered property intelligence platform that synthesizes data from *
 
 ## 🔟 COMPETITIVE ADVANTAGE
 
-### Why Veo Beats the Competition
+### Why Domus Beats the Competition
 
-| Feature | Veo | Rightmove/Zoopla | Google Maps |
+| Feature | Domus | Rightmove/Zoopla | Google Maps |
 |---------|-----|------------------|-------------|
 | **AI Recommendations** | ✅ | ❌ | ❌ |
 | **Persona Customization** | ✅ | ❌ | ❌ |
@@ -322,7 +322,7 @@ Example structure:
 
 ## 1️⃣4️⃣ CALL TO ACTION
 
-### Why Veo Wins
+### Why Domus Wins
 
 ✅ **Solves a real problem:** 300k+ annual London movers need this  
 ✅ **AI-first approach:** No competitor offers persona-based AI recommendations  
@@ -330,7 +330,7 @@ Example structure:
 ✅ **Technical excellence:** Modern stack, clean architecture, well-documented  
 ✅ **Impact-driven:** Saves weeks of research, reduces decision stress  
 
-**Veo isn't just a hackathon project — it's the future of property search.**
+**Domus isn't just a hackathon project — it's the future of property search.**
 
 ---
 
@@ -351,7 +351,7 @@ Example structure:
 ### Slide Design Tips
 
 **Title Slides:**
-- Use large, bold text for "Veo"
+- Use large, bold text for "Domus"
 - Include tagline: "Find Your Perfect London Neighborhood, Powered by AI"
 - Visual: London skyline or abstract map background
 

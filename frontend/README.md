@@ -1,6 +1,6 @@
-# Veo Frontend
+# Domus Frontend
 
-Next.js web application for the Veo housing recommendation platform.
+Next.js web application for the Domus housing recommendation platform.
 
 ## Features
 

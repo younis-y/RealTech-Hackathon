@@ -86,7 +86,7 @@ You operate as **Layer 2: Orchestration** in a 3-layer system:
 
 4. **Generate video**
    - `generate_video.py` (see directive: `video_explainer_generation.md`)
-   - Try Veo → Sora → LTX → Nano in order
+   - Try Domus → Sora → LTX → Nano in order
    - Show "Generating video (may take 2-3 minutes)..." message
    - Return video URL when complete
 

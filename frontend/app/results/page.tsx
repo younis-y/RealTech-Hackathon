@@ -66,7 +66,7 @@ function InsightRow({ emoji, title, subtitle }: { emoji: string; title: string; 
 
       {/* Text Column */}
       <div className="flex-1 min-w-0 flex flex-col gap-1">
-        <span className="font-bold text-slate-900 text-sm leading-snug">
+        <span className="text-slate-500 text-xs font-normal leading-relaxed">
           {cleanText(title)}
         </span>
         {subtitle && (

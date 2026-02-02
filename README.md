@@ -1,4 +1,4 @@
-# Veo Housing Platform
+# Domus Housing Platform
 &gt; AI-powered property recommendation engine with persona-based scoring and intelligent multi-source data enrichment, with additional video output
 
 ![Build Status](https://img.shields.io/badge/build-passing-brightgreen)
@@ -8,7 +8,7 @@
 ![License](https://img.shields.io/badge/license-MIT-blue)
 
 ## Description
-Veo is an intelligent property recommendation system that helps users find the perfect London neighborhood based on their lifestyle and priorities. The platform leverages a sophisticated 3-layer AI orchestration architecture to synthesize live data from property intelligence APIs, transport networks, crime statistics, and education ratings—delivering personalized, data-driven area recommendations with transparent scoring and AI-generated explanations and tiktok output 
+Domus is an intelligent property recommendation system that helps users find the perfect London neighborhood based on their lifestyle and priorities. The platform leverages a sophisticated 3-layer AI orchestration architecture to synthesize live data from property intelligence APIs, transport networks, crime statistics, and education ratings—delivering personalized, data-driven area recommendations with transparent scoring and AI-generated explanations and tiktok output 
 
 ## Video
 
@@ -69,7 +69,7 @@ graph TB
     TfL --> TfLAPI["TfL Unified API"]
     Crime --> PoliceAPI["UK Police Data API"]
     Schools --> GIAS["GIAS/Ofsted API"]
-    Video --> VideoAI["Veo/Sora/LTX API"]
+    Video --> VideoAI["Domus/Sora/LTX API"]
     
     ScanSan --> Cache["⚡ Redis Cache"]
     TfL --> Cache
@@ -170,7 +170,7 @@ REDIS_URL=redis://localhost:6379
 
 ## Screenshots / Demo
 &lt;!-- Placeholder for project screenshots --&gt;
-![Dashboard Placeholder](https://via.placeholder.com/800x450?text=Veo+Housing+Platform+Dashboard)
+![Dashboard Placeholder](https://via.placeholder.com/800x450?text=Domus+Housing+Platform+Dashboard)
 
 *Live Demo: [https://github.com/younis-y/RealTech-Hackathon](https://github.com/younis-y/RealTech-Hackathon)*
 

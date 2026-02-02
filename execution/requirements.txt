@@ -1,4 +1,4 @@
-# Python dependencies for Veo execution scripts
+# Python dependencies for Domus execution scripts
 # Install with: pip install -r requirements.txt
 
 # API clients
