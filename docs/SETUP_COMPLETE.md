@@ -206,9 +206,9 @@ Estimated cost: **£0.02-0.10 per user** for recommendations, **+£0.10-0.50** i
 
 | File | Purpose |
 |------|---------|
-| [README.md](README.md) | Complete project overview and architecture |
+| [README.md](../README.md) | Complete project overview and architecture |
 | [QUICK_REFERENCE.md](QUICK_REFERENCE.md) | Common commands and workflows |
-| [directives/MASTER_ORCHESTRATION.md](directives/MASTER_ORCHESTRATION.md) | AI orchestration guide |
+| [directives/MASTER_ORCHESTRATION.md](../directives/MASTER_ORCHESTRATION.md) | AI orchestration guide |
 | [Agents.md](Agents.md) | Deep dive on 3-layer architecture |
 | [Claude_updated.md](Claude_updated.md) | Full project specification |
 

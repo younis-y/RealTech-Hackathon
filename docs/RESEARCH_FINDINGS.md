@@ -1169,7 +1169,7 @@ Update [`PLAN.md`](PLAN.md) and [`BACKEND_README.md`](BACKEND_README.md) with:
 
 ### Immediate Actions for Builder
 
-1. **Add dependencies to [`frontend/package.json`](frontend/package.json)**:
+1. **Add dependencies to [`frontend/package.json`](../frontend/package.json)**:
    ```json
    {
      "dependencies": {

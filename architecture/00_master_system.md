@@ -317,6 +317,6 @@ Output (JSON + web UI + optional video)
 ---
 
 **References**:
-- [gemini.md](../gemini.md) - Project Map & State
-- [BLAST.md](../BLAST.md) - Protocol Reference
+- [gemini.md](../docs/gemini.md) - Project Map & State
+- [BLAST.md](../docs/BLAST.md) - Protocol Reference
 - Individual SOPs: 01-06 in this directory

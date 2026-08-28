@@ -30,12 +30,12 @@ This document tracks the backend implementation for the Veo Housing Recommendati
 ## Current State Analysis
 
 ### ✅ What's Working
-- **Demo Pipeline**: [`demo_pipeline.py`](demo_pipeline.py) - Full end-to-end demo
-- **Execution Scripts**: Core data fetching in [`execution/`](execution/) and [`tools/`](tools/)
-  - [`scansan_api.py`](execution/scansan_api.py) - Property intelligence
-  - [`score_and_rank.py`](execution/score_and_rank.py) - Scoring engine
+- **Demo Pipeline**: [`demo_pipeline.py`](../demo_pipeline.py) - Full end-to-end demo
+- **Execution Scripts**: Core data fetching in [`execution/`](../execution/) and [`tools/`](../tools/)
+  - [`scansan_api.py`](../execution/scansan_api.py) - Property intelligence
+  - [`score_and_rank.py`](../execution/score_and_rank.py) - Scoring engine
   - TfL, Crime, Schools, Amenities fetchers
-- **Basic API Route**: [`/api/recommendations`](frontend/app/api/recommendations/route.ts) - Works but needs improvement
+- **Basic API Route**: [`/api/recommendations`](../frontend/app/api/recommendations/route.ts) - Works but needs improvement
 
 ### ⚠️ What Needs Work
 1. **API Structure**: Current route spawns Python processes - inefficient for production
@@ -55,7 +55,7 @@ Build production-ready API endpoints with proper error handling, validation, and
 ### Tasks
 
 #### 1. Refactor `/api/recommendations` Route ✅ IN PROGRESS
-**File**: [`frontend/app/api/recommendations/route.ts`](frontend/app/api/recommendations/route.ts)
+**File**: [`frontend/app/api/recommendations/route.ts`](../frontend/app/api/recommendations/route.ts)
 
 **Current Issues**:
 - Spawns Python subprocess for each request (slow, resource-intensive)
@@ -104,8 +104,8 @@ Build production-ready API endpoints with proper error handling, validation, and
 #### 4. Python Output Standardization 🔄 TODO
 
 **Update Python Scripts** to output structured JSON:
-- [`demo_pipeline.py`](demo_pipeline.py) - Add `--json` flag for JSON output
-- [`tools/score_areas.py`](tools/score_areas.py) - Already returns JSON, verify format
+- [`demo_pipeline.py`](../demo_pipeline.py) - Add `--json` flag for JSON output
+- [`tools/score_areas.py`](../tools/score_areas.py) - Already returns JSON, verify format
 - All execution scripts - Ensure consistent error format
 
 **Standard Response Format**:

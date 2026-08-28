@@ -120,7 +120,7 @@ echo.
 echo 4. Read the documentation:
 echo    - README.md: Project overview
 echo    - directives\MASTER_ORCHESTRATION.md: AI orchestration guide
-echo    - Agents.md: Architecture details
+echo    - docs/Agents.md: Architecture details
 echo.
 echo Start using the AI orchestrator by asking:
 echo    "I'm a student looking for housing in London..."

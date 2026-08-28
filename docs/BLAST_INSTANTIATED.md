@@ -18,8 +18,8 @@ A 5-phase protocol for building deterministic, self-healing automation systems.
 
 **Created:**
 - [gemini.md](gemini.md:1) - Project Map (Source of Truth)
-- [architecture/](architecture/) directory - Layer 1 SOPs
-- [tools/](tools/) directory - Layer 3 Python scripts
+- [architecture/](../architecture/) directory - Layer 1 SOPs
+- [tools/](../tools/) directory - Layer 3 Python scripts
 - `.tmp/` directory - Intermediate files
 
 **Status:**

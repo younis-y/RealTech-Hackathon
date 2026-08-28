@@ -106,7 +106,7 @@ graph TB
 ### Data Flow
 
 1. **User Request**: Provides persona, budget, destination, and preferences
-2. **Orchestration**: Claude reads `MASTER_ORCHESTRATION.md` to determine workflow
+2. **Orchestration**: Claude reads `docs/MASTER_ORCHESTRATION.md` to determine workflow
 3. **Parallel Fetching**: Triggers Layer 3 scripts simultaneously to fetch data from multiple APIs
 4. **Caching**: Redis checks for cached results to minimize API calls and reduce latency
 5. **Scoring**: Persona-specific weights applied to raw data (e.g., Students: 40% affordability, 30% commute, 20% amenities, 10% safety)
@@ -123,7 +123,10 @@ graph TB
 - **Scalability**: Parallel execution and aggressive caching support concurrent users
 - **Maintainability**: Clear separation of concerns across three distinct layers
 
-For detailed architecture diagrams and technical specifications, see [ARCHITECTURE.md](ARCHITECTURE.md).
+For detailed architecture diagrams and technical specifications, see
+[docs/ARCHITECTURE.md](docs/ARCHITECTURE.md). The design notes, agent
+directives and build log from the hackathon are indexed in
+[docs/](docs/README.md).
 ### Step-by-Step Setup
 1. **Clone the Repository**:
    ```bash
