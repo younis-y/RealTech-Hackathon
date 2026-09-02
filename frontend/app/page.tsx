@@ -161,7 +161,9 @@ export default function Home() {
 
           {/* Info */}
           <div className="mt-6 text-center text-sm text-gray-500">
-            <p>Powered by AI • Real London data • Transparent scoring</p>
+            <p>Prototype. Prices, school ratings and commute times are
+              synthetic placeholders &mdash; see the README before trusting a
+              number.</p>
           </div>
         </div>
 
@@ -169,11 +171,11 @@ export default function Home() {
         <div className="grid grid-cols-3 gap-4 mt-8 text-center">
           <div className="bg-white p-4 rounded-lg shadow">
             <div className="text-2xl mb-2">🏘️</div>
-            <div className="text-sm font-medium">Real Data</div>
+            <div className="text-sm font-medium">30 Districts</div>
           </div>
           <div className="bg-white p-4 rounded-lg shadow">
-            <div className="text-2xl mb-2">🤖</div>
-            <div className="text-sm font-medium">AI Explanations</div>
+            <div className="text-2xl mb-2">🧭</div>
+            <div className="text-sm font-medium">Three Personas</div>
           </div>
           <div className="bg-white p-4 rounded-lg shadow">
             <div className="text-2xl mb-2">📊</div>

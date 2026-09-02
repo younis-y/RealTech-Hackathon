@@ -5,7 +5,8 @@ import path from 'path'
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json()
-    const { persona, budget, locationType, destination, maxAreas } = body
+    // maxAreas defaults to 5 so a request that omits it does not throw.
+    const { persona, budget, locationType, destination, maxAreas = 5 } = body
 
     // Path to Python script (relative to project root)
     const pythonScript = path.join(process.cwd(), '..', 'demo_pipeline.py')
@@ -104,8 +105,9 @@ function parsePythonOutput(output: string): any[] {
       currentRec.factors[factorMatch[1]] = parseInt(factorMatch[2])
     }
 
-    // Parse strengths
-    const strengthMatch = line.match(/\[+\] Strengths:\s+(.+)/)
+    // Parse strengths. The '+' must stay escaped: /\[+\]/ would mean
+    // "one or more '[' then ']'" and never match '[+] Strengths:'.
+    const strengthMatch = line.match(/\[\+\] Strengths:\s+(.+)/)
     if (strengthMatch && currentRec) {
       currentRec.strengths = strengthMatch[1].split(',').map(s => s.trim())
     }

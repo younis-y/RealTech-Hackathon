@@ -1,7 +1,15 @@
 # ScanSan Property Intelligence Directive
 
 ## Goal
-Fetch property and area intelligence data from ScanSan API for candidate locations, including affordability scores, risk assessments, investment quality metrics, and demand indicators.
+Give each candidate district an affordability score, an investment quality
+score and a headline price, for the scoring engine to weight.
+
+> **No ScanSan data is ever fetched.** No working API key was available, so
+> `tools/fetch_scansan.py` sets `USE_MOCK_DATA = True` and generates every
+> figure with `random.randint` over hand-set per-district tiers.
+> `execution/scansan_api.py` is the client written against the real API; it has
+> never returned data. Every price, growth and yield number the pipeline prints
+> is invented.
 
 ## Inputs
 - **area_codes**: List of UK postcode districts or sectors (e.g., ["SW1A", "E1", "M1"])
@@ -15,7 +23,8 @@ Fetch property and area intelligence data from ScanSan API for candidate locatio
   - yield_estimates
 
 ## Execution Tool
-Use `execution/scansan_api.py`
+The pipeline uses `tools/fetch_scansan.py` (mock). `execution/scansan_api.py`
+is the real client, and needs `SCANSAN_API_KEY`.
 
 ## Process
 1. Validate inputs (area codes must be valid UK postcodes)
@@ -44,9 +53,9 @@ JSON structure per area/property:
 ```
 
 ## Edge Cases & Learnings
-- **Rate limits**: ScanSan API has 100 requests/hour on free tier, 1000/hour on paid
-  - If hit rate limit, cache aggressively and batch requests
-  - Script includes exponential backoff retry logic
+- **Rate limits**: unknown — the API was never reached, so no limit has been
+  observed. `execution/scansan_api.py` sleeps for the `Retry-After` header on
+  429 and backs off exponentially on any other unexpected status.
 - **Invalid area codes**: Return null for that area but continue with others
 - **Missing metrics**: Some areas may not have all metrics; script returns null for unavailable data
 - **Staleness**: Cache is valid for 24 hours for property data, 7 days for area trends

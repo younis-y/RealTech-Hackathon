@@ -2,8 +2,6 @@
 """
 Schools Data Fetcher
 Fetches school ratings using OpenStreetMap + mock Ofsted ratings.
-Architecture SOP: architecture/01_data_pipeline.md (Stage 3)
-Data Schema: gemini.md (#5 Schools Data Response Schema)
 """
 
 import os

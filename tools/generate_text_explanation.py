@@ -2,8 +2,6 @@
 """
 Text Explanation Generator
 Generates natural language explanations using Anthropic Claude API.
-Architecture SOP: architecture/03_explanation_generation.md (to be created)
-Data Schema: gemini.md (#9 Explanation Generation Schema)
 """
 
 import os

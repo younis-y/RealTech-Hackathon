@@ -2,8 +2,6 @@
 """
 Amenities Mapper
 Fetches nearby amenities (cafes, gyms, supermarkets) using OpenStreetMap.
-Architecture SOP: architecture/01_data_pipeline.md (Stage 3)
-Data Schema: gemini.md (#6 Amenities Response Schema)
 """
 
 import os
@@ -58,7 +56,13 @@ def fetch_amenities_osm(area_code: str, radius_km: float = 1.0) -> Dict:
         response = requests.post(OVERPASS_API, data={"data": query}, timeout=15)
         if response.status_code == 200:
             data = response.json()
-            count = len(data.get("elements", []))
+            elements = data.get("elements", [])
+            # `out count;` returns a single synthetic element of type "count"
+            # whose tags carry the totals; anything else is a list of nodes.
+            if elements and elements[0].get("type") == "count":
+                count = int(elements[0].get("tags", {}).get("total", 0))
+            else:
+                count = len(elements)
 
             # Calculate density score (0-100)
             if count > 100:

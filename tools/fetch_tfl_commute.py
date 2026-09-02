@@ -2,8 +2,6 @@
 """
 TfL Commute Calculator
 Calculates commute times using Transport for London API or mock data.
-Architecture SOP: architecture/01_data_pipeline.md (Stage 3)
-Data Schema: gemini.md (#3 TfL Commute Response Schema)
 """
 
 import os

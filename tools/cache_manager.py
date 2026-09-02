@@ -2,7 +2,6 @@
 """
 Cache Manager - Atomic tool for caching API responses
 Part of Layer 3: Tools (deterministic operations)
-Architecture SOP: architecture/00_master_system.md
 """
 
 import os
@@ -14,14 +13,15 @@ from typing import Optional, Dict, Any
 
 
 CACHE_DIR = ".tmp"
+# Keys must match the cache_type each fetcher passes to read_cache/write_cache;
+# an unlisted type silently falls back to 24 hours.
 CACHE_VALIDITY = {
     "scansan_property": 24,      # hours
-    "scansan_trends": 168,        # 7 days
-    "tfl_commute": 168,           # 7 days
-    "crime": 720,                 # 30 days
-    "schools": 2160,              # 90 days
-    "amenities": 720,             # 30 days
-    "video_url": float('inf'),    # never expire
+    "tfl_commute": 168,          # 7 days
+    "crime_data": 720,           # 30 days
+    "amenities_data": 720,       # 30 days
+    "schools_data": 2160,        # 90 days
+    "explanation": 720,          # 30 days
 }
 
 

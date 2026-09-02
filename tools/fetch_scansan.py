@@ -2,8 +2,6 @@
 """
 ScanSan Property Intelligence Fetcher
 Fetches property/area data from ScanSan API or generates mock data for development.
-Architecture SOP: architecture/01_data_pipeline.md (Stage 2)
-Data Schema: gemini.md (#2 ScanSan API Response Schema)
 """
 
 import os

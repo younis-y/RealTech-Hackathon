@@ -1,64 +1,60 @@
 # Crime Data Fetcher Directive
 
 ## Goal
-Fetch and aggregate crime statistics for candidate areas using data.police.uk API to provide safety scores and crime breakdowns by category.
+Give each candidate district a safety score from reported street-level crime,
+for the scoring engine to weight.
+
+This is one of the two factors that come from a live API on every run.
 
 ## Inputs
-- **area_codes**: List of UK postcodes or coordinates
-- **radius_meters**: Search radius around each location (default: 1000m, max: 5000m)
-- **time_period**: Number of recent months to aggregate (default: 12, max: 24)
-- **crime_categories**: Optional filter (default: all)
-  - Available: violent-crime, burglary, robbery, theft, vehicle-crime, antisocial-behaviour, etc.
+- **area_code**: one of the 30 covered postcode districts (e.g. `E1`)
+- **use_cache**: read from `.tmp/` if a cached result is still valid (30 days)
 
 ## Execution Tool
-Use `execution/crime_data.py`
+Use `tools/fetch_crime_data.py`
 
 ## Process
-1. Convert postcodes to coordinates (use UK postcode API if needed)
-2. For each location, call data.police.uk crimes-at-location endpoint
-3. Aggregate crime counts by category over specified time period
-4. Calculate safety score (0-100) based on:
-   - Total crime count relative to national/London average
-   - Crime type severity weighting (violent > burglary > antisocial)
-   - Trend direction (improving vs worsening)
-5. Store raw data in `.tmp/crime_data_{area}_{timestamp}.json`
-6. Return aggregated safety metrics
+1. Look the district up in `AREA_COORDS` (fixed centroids; unknown codes return
+   `None`).
+2. Call `https://data.police.uk/api/crimes-street/all-crime?lat=&lng=`. No key
+   is needed. The endpoint returns **the most recent single month** the Home
+   Office has published, for the streets around that point.
+3. Count the crimes and bucket the categories the API reports into six coarse
+   groups.
+4. Band the total into a safety score: <30 → 90, <60 → 75, <90 → 60,
+   <120 → 45, otherwise 30. These thresholds are hand-set guesses, not
+   calibrated against any London-wide distribution.
+5. Cache the result in `.tmp/` for 30 days.
 
 ## Outputs
-JSON structure per area:
 ```json
 {
-  "area_code": "SW1A 1AA",
-  "lat": 51.5014,
-  "lon": -0.1419,
-  "time_period_months": 12,
-  "total_crimes": 234,
-  "crimes_per_1000_people": 45.2,
-  "safety_score": 72,
-  "crime_breakdown": {
-    "violent-crime": 45,
-    "burglary": 12,
-    "theft": 89,
-    "antisocial-behaviour": 67,
-    "other": 21
-  },
-  "trend": "improving",
-  "percentile_vs_london": 65,
-  "timestamp": "ISO-8601"
+  "area_code": "E1",
+  "lat": 51.5154,
+  "lon": -0.0616,
+  "time_period_months": 1,
+  "total_crimes": 84,
+  "safety_score": 60,
+  "crime_breakdown": {"violent-crime": 31, "burglary": 4, "theft": 22,
+                      "vehicle-crime": 3, "antisocial-behaviour": 18, "other": 6},
+  "data_source": "uk_police_data"
 }
 ```
+The scorer reads only `safety_score`.
+
+Two fields in the returned dict are placeholders and should not be used:
+`trend` is always the string `"stable"` (no historical comparison is made) and
+`percentile_vs_london` is just a copy of `safety_score`. `crimes_per_1000_people`
+is the raw count — no population figure is involved.
 
 ## Edge Cases & Learnings
-- **Rate limits**: data.police.uk has 15 requests/second, 10,000/day
-  - Script includes 100ms delay between requests
-  - Batch nearby areas to reduce API calls
-- **No data**: Some areas may have no crimes reported; return score of 100 (safest)
-- **Outdated data**: API has 1-2 month lag; most recent month may be incomplete
-- **Population normalization**: Crimes per 1000 people requires population data
-  - Use ONS population estimates (see `ons_demographics.md` directive)
-- **Coordinate accuracy**: data.police.uk anonymizes exact locations to nearest street
-- **Trend calculation**: Compare last 6 months to previous 6 months
-
-## Self-Annealing Notes
-- 2024-01-31: Initial directive created
-- [Future updates]
+- **Rate limits**: data.police.uk asks for reasonable use. The fetcher does not
+  throttle, so a large batch is on the caller.
+- **Lag**: the published data runs one to two months behind, and the most
+  recent month can be incomplete.
+- **Anonymised locations**: the API snaps each crime to a nearby street point,
+  so counts are indicative of an area, not a street.
+- **A failed call** returns `None`, and the scorer falls back to 50.
+- **Not normalised by population**: a busy district with many visitors will look
+  worse than a quiet residential one of the same size. Comparing districts on
+  this score is the weakest link in the ranking.

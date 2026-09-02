@@ -15,7 +15,7 @@ You operate as **Layer 2: Orchestration** in a 3-layer system:
 
 ## Core Operating Principles
 
-1. **Check for tools first** - Before creating new scripts, check `execution/` directory
+1. **Check for tools first** - Before creating new scripts, check `tools/`
 2. **Self-anneal when things break** - Fix errors, update directives with learnings
 3. **Never execute directly** - Always use scripts for API calls, data processing, etc.
 4. **Ask clarifying questions** - If user intent is ambiguous, ask before proceeding
@@ -41,15 +41,15 @@ You operate as **Layer 2: Orchestration** in a 3-layer system:
    - Generate list of affordable London areas (use ScanSan affordability filter)
    - Typical student areas: E1, E2, E3, SE1, SE15, SW9, N1, N7, etc.
 
-3. **Fetch enrichment data** (parallel execution)
-   - `scansan_api.py` - Get ScanSan scores for all candidate areas
-   - `tfl_commute.py` - Calculate commute times from each area to UCL
-   - `crime_data.py` - Fetch safety scores
-   - `amenities_map.py` - Get amenity density (persona: student)
+3. **Fetch enrichment data**
+   - `tools/fetch_scansan.py` - Get ScanSan scores for all candidate areas
+   - `tools/fetch_tfl_commute.py` - Calculate commute times from each area to UCL
+   - `tools/fetch_crime_data.py` - Fetch safety scores
+   - `tools/fetch_amenities.py` - Get amenity density (persona: student)
    - (Skip schools for student persona unless requested)
 
 4. **Score and rank**
-   - `score_and_rank.py` with:
+   - `tools/score_areas.py` with:
      - persona: "student"
      - user_preferences: budget, commute, weights
      - enrichment_data: combined results from step 3
@@ -57,45 +57,14 @@ You operate as **Layer 2: Orchestration** in a 3-layer system:
 
 5. **Generate explanations**
    - For top 3-5 recommendations:
-   - `generate_explanation.py` with output_format: "medium"
+   - `tools/generate_text_explanation.py` with output_format: "medium"
    - Persona-specific natural language
 
 6. **Present results to user**
    - Show ranked list with scores and explanations
-   - Offer to generate video for any top choice
    - Offer to adjust weights if results don't match expectations
 
-### Flow 2: Generate Explainer Video
-
-**User says**: "Generate video for Shoreditch recommendation"
-
-**Your orchestration steps**:
-
-1. **Retrieve recommendation data**
-   - Load cached recommendation from previous session OR
-   - Ask user to first generate recommendations
-
-2. **Generate video script**
-   - `generate_explanation.py` with output_format: "video_script"
-   - 200 words, narration-ready
-
-3. **Prepare visual assets**
-   - Generate map image with Google Maps Static API
-   - Create score card overlays (can use simple image generation)
-   - Store in `.tmp/video_assets_{area_code}/`
-
-4. **Generate video**
-   - `generate_video.py` (see directive: `video_explainer_generation.md`)
-   - Try Veo → Sora → LTX → Nano in order
-   - Show "Generating video (may take 2-3 minutes)..." message
-   - Return video URL when complete
-
-5. **Present video to user**
-   - Provide URL to watch
-   - Offer to generate for other recommendations
-   - Log cost and generation time for analytics
-
-### Flow 3: Adjust Recommendations
+### Flow 2: Adjust Recommendations
 
 **User says**: "These are too expensive, show me cheaper options"
 
@@ -110,12 +79,12 @@ You operate as **Layer 2: Orchestration** in a 3-layer system:
 
 3. **Re-run scoring** with adjusted preferences
    - Use cached enrichment data if available (don't re-fetch APIs)
-   - Call `score_and_rank.py` with new preferences
+   - Call `tools/score_areas.py` with new preferences
 
 4. **Present new results**
    - Explain what changed: "Here are results with budget under £900..."
 
-### Flow 4: Error Handling and Self-Annealing
+### Flow 3: Error Handling and Self-Annealing
 
 **Scenario**: API call fails (e.g., ScanSan rate limit hit)
 
@@ -152,7 +121,7 @@ Create new directive when:
 **Process**:
 1. Ask user to confirm directive creation
 2. Create directive following same template as existing ones
-3. Create corresponding execution script in `execution/`
+3. Create the corresponding worker script in `tools/`
 4. Test with sample data
 5. Update this MASTER_ORCHESTRATION.md to reference new directive
 
@@ -166,14 +135,13 @@ Create new directive when:
 
 | Directive | Purpose | Execution Script |
 |-----------|---------|------------------|
-| `scansan_property_intelligence.md` | Fetch ScanSan scores | `scansan_api.py` |
-| `tfl_commute_calculator.md` | Calculate commute times | `tfl_commute.py` |
-| `crime_data_fetcher.md` | Fetch crime/safety data | `crime_data.py` |
-| `schools_ofsted_fetcher.md` | Fetch school ratings | `schools_ofsted.py` |
-| `amenities_mapper.md` | Map nearby amenities | `amenities_map.py` |
-| `scoring_ranking_engine.md` | Score and rank areas | `score_and_rank.py` |
-| `explanation_generator.md` | Generate NL explanations | `generate_explanation.py` |
-| `video_explainer_generation.md` | Generate videos | `generate_video.py` |
+| `scansan_property_intelligence.md` | Fetch ScanSan scores | `tools/fetch_scansan.py` |
+| `tfl_commute_calculator.md` | Calculate commute times | `tools/fetch_tfl_commute.py` |
+| `crime_data_fetcher.md` | Fetch crime/safety data | `tools/fetch_crime_data.py` |
+| `schools_ofsted_fetcher.md` | Fetch school ratings | `tools/fetch_schools.py` |
+| `amenities_mapper.md` | Map nearby amenities | `tools/fetch_amenities.py` |
+| `scoring_ranking_engine.md` | Score and rank areas | `tools/score_areas.py` |
+| `explanation_generator.md` | Generate NL explanations | `tools/generate_text_explanation.py` |
 
 ## Decision Trees
 
@@ -201,15 +169,6 @@ Persona = Developer?
   → Skip: schools
 ```
 
-### When to generate video?
-
-```
-User explicitly requests? → Yes, generate
-Top 3 recommendations presented? → Offer, don't auto-generate (costs money)
-User is on mobile? → Prioritize video (better UX)
-User sharing results? → Suggest video (shareable format)
-```
-
 ## Self-Annealing Loop in Action
 
 When something breaks:
@@ -224,9 +183,9 @@ Example:
 ```
 Error: "TfL API returned 404 for postcode E1"
 Diagnosis: Postcode needs sector (E1 6AN not E1)
-Fix: Updated tfl_commute.py to validate full postcode format
+Fix: Updated tools/fetch_tfl_commute.py to validate full postcode format
 Test: Confirmed E1 6AN works
-Directive update: Added to tfl_commute_calculator.md edge cases
+Directive update: Added to directives/tfl_commute_calculator.md edge cases
 Result: Won't happen again
 ```
 
@@ -248,7 +207,7 @@ Be pragmatic. Be reliable. Self-anneal.
 
 Before starting work:
 1. ✅ `.env` file created and populated with API keys
-2. ✅ Python dependencies installed (`pip install -r execution/requirements.txt`)
+2. ✅ Python dependencies installed (`pip install -r requirements.txt`)
 3. ✅ Test API keys work (run sample scripts)
 4. ✅ `.tmp/` directory exists and is in `.gitignore`
 
@@ -258,4 +217,4 @@ When user makes first request:
 3. Execute scripts in parallel where possible
 4. Combine results
 5. Present clearly
-6. Offer next actions (video, adjustments, sharing)
+6. Offer next actions (weight adjustments, a different persona)

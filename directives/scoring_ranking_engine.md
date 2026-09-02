@@ -20,7 +20,7 @@ Combine ScanSan property intelligence with enrichment data (commute, crime, scho
   - Amenities (from `amenities_mapper.md`)
 
 ## Execution Tool
-Use `execution/score_and_rank.py`
+Use `tools/score_areas.py`
 
 ## Process
 1. **Normalize all scores to 0-100 scale**
@@ -31,35 +31,28 @@ Use `execution/score_and_rank.py`
    - Amenities: density_score
 
 2. **Apply persona-specific base weights**
+
+   These are the weights in `tools/score_areas.py` (`PERSONA_WEIGHTS`). They are
+   hand-set defaults, not fitted to any data.
    ```
-   Student:
-     - affordability: 35%
-     - commute: 25%
-     - safety: 15%
-     - amenities: 20%
-     - investment_quality: 5%
-
-   Parent:
-     - affordability: 20%
-     - schools: 30%
-     - safety: 25%
-     - commute: 15%
-     - amenities: 10%
-
-   Developer:
-     - investment_quality: 40%
-     - demand_index: 25%
-     - risk_score: 20%
-     - infrastructure: 15%
+   Student:                Parent:                 Developer:
+     affordability: 35%      affordability: 20%      affordability: 10%
+     commute:       25%      commute:       15%      commute:        5%
+     safety:        15%      safety:        25%      safety:        10%
+     amenities:     15%      amenities:     10%      amenities:     15%
+     schools:        0%      schools:       30%      schools:       20%
+     investment:    10%      investment:     0%      investment:    40%
    ```
 
 3. **Adjust weights by user importance ratings**
    - User provides 0-10 importance for each factor
    - Scale base weights proportionally
 
-4. **Apply hard constraints (filters)**
-   - budget_max, max_commute, min_safety, min_school_rating
-   - Remove candidates that fail constraints
+4. **Filter by budget before scoring**
+   - The only filter implemented is the budget filter in
+     `get_candidate_areas()` (`tools/fetch_scansan.py`), applied before
+     enrichment. The scorer itself does not drop candidates, so
+     max_commute / min_safety / min_school_rating are not enforced anywhere.
 
 5. **Calculate weighted composite score**
    - composite_score = Σ(factor_score × adjusted_weight)
@@ -74,48 +67,39 @@ Use `execution/score_and_rank.py`
 8. **Output top N recommendations** (default N=10)
 
 ## Outputs
-JSON structure:
+One dict per area, ranked. This is the real shape returned by
+`rank_areas()`; a missing factor falls back to a neutral 50 (30 minutes for
+commute), so a factor score of exactly 50 usually means "no data".
 ```json
 {
-  "persona": "student",
-  "user_preferences": {...},
-  "recommendations": [
-    {
-      "rank": 1,
-      "area_code": "E1 6AN",
-      "composite_score": 87.3,
-      "factor_scores": {
-        "affordability": 92,
-        "commute": 85,
-        "safety": 78,
-        "amenities": 90,
-        "investment_quality": 72
-      },
-      "factor_contributions": {
-        "affordability": 32.2,
-        "commute": 21.3,
-        "safety": 11.7,
-        "amenities": 18.0,
-        "investment_quality": 3.6
-      },
-      "strengths": ["Excellent nightlife", "Quick commute to campus", "Very affordable"],
-      "weaknesses": ["Slightly higher crime than ideal"],
-      "trade_offs": "Prioritizes convenience and affordability over safety margin"
-    }
-  ],
-  "filtered_out_count": 5,
-  "timestamp": "ISO-8601"
+  "area_code": "E1",
+  "area_name": "Whitechapel",
+  "rank": 1,
+  "composite_score": 73.9,
+  "factor_breakdown": {
+    "affordability": 85,
+    "commute": 63.3,
+    "safety": 62,
+    "amenities": 80,
+    "schools": 65,
+    "investment": 70
+  },
+  "strengths": ["affordability", "amenities"],
+  "weaknesses": [],
+  "explanation": null,
+  "enrichment_data": {"...": "the raw fetcher output, kept for the explainer"}
 }
 ```
+Strengths are the highest-scoring factors that clear 70 (at most two);
+weaknesses are every factor below 50.
 
 ## Edge Cases & Learnings
 - **Missing data**: If a factor has no data for an area, exclude that area or use neutral score (50)
   - Log which areas excluded and why
 - **Weight normalization**: Ensure adjusted weights sum to 100%
-- **Tied scores**: If two areas have identical scores, rank by affordability (students/parents) or investment quality (developers)
-- **No candidates pass filters**: Relax constraints incrementally and inform user
-  - "No areas found under £1200/month. Showing results up to £1400"
-- **Extreme outliers**: Cap individual factor scores at 100 to prevent skewing
+- **Tied scores**: not handled; `sort()` is stable, so ties keep fetch order
+- **No candidates pass the budget filter**: the pipeline reports zero areas
+  rather than relaxing the budget
 - **Explanation generation**: Use factor contributions to generate natural language
   - Top contributor → "primarily because..."
   - Secondary contributors → "also benefits from..."

@@ -2,8 +2,8 @@ import type { Metadata } from 'next'
 import './globals.css'
 
 export const metadata: Metadata = {
-  title: 'Veo - Smart Housing Recommendations',
-  description: 'AI-powered housing recommendations for London',
+  title: 'Veo area recommender',
+  description: 'Persona-weighted ranking of London postcode districts. Prototype: some data is synthetic.',
 }
 
 export default function RootLayout({

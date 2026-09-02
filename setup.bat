@@ -39,7 +39,7 @@ echo.
 REM Install dependencies
 echo Installing Python dependencies...
 python -m pip install --upgrade pip
-pip install -r execution\requirements.txt
+pip install -r requirements.txt
 echo √ Dependencies installed
 echo.
 
@@ -108,22 +108,17 @@ echo   Temp directory: .tmp\
 echo.
 echo Next Steps:
 echo.
-echo 1. Edit .env file and add your API keys
-echo    notepad .env
+echo 1. Optional: edit .env to add API keys. The ranking runs without any
+echo    key; ANTHROPIC_API_KEY buys explanations, TFL_APP_KEY buys real
+echo    commute times.
 echo.
-echo 2. Test ScanSan API (requires SCANSAN_API_KEY):
-echo    python execution\scansan_api.py SW1A E1
+echo 2. Run the pipeline:
+echo    python demo_pipeline.py --persona student --budget 1200 --type rent ^
+echo      --destination UCL --no-explanations
 echo.
-echo 3. Test explanation generator (requires ANTHROPIC_API_KEY):
-echo    python execution\generate_explanation.py
-echo.
-echo 4. Read the documentation:
-echo    - README.md: Project overview
-echo    - directives\MASTER_ORCHESTRATION.md: AI orchestration guide
-echo    - docs/Agents.md: Architecture details
-echo.
-echo Start using the AI orchestrator by asking:
-echo    "I'm a student looking for housing in London..."
+echo 3. Read the documentation:
+echo    - README.md: what the project does and where each number comes from
+echo    - directives\: the Markdown SOPs the orchestration layer reads
 echo.
 echo =========================================
 echo.

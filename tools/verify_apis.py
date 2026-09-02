@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 """
-API Verification Tool - Phase 2: Link Handshake Tests
-Tests all external API connections before proceeding to full development.
-Architecture SOP: architecture/05_api_integrations.md
+API Verification Tool
+Handshake test for the external APIs this repository talks to. Nothing here is
+required to run the ranking: without keys, only the two open APIs are checked.
 """
 
 import os
@@ -18,14 +18,14 @@ load_dotenv()
 APIS = {
     "scansan": {
         "name": "ScanSan Property Intelligence",
-        "required": True,
+        "required": False,   # unused by the pipeline; fetch_scansan.py is mocked
         "env_var": "SCANSAN_API_KEY",
         "test_endpoint": "https://api.scansan.com/v1/area/SW1A",
         "auth_type": "bearer"
     },
     "anthropic": {
         "name": "Anthropic Claude",
-        "required": True,
+        "required": False,   # only needed for --explanations
         "env_var": "ANTHROPIC_API_KEY",
         "test_endpoint": None,  # Use SDK test
         "auth_type": "sdk"
@@ -35,13 +35,6 @@ APIS = {
         "required": False,
         "env_var": "TFL_APP_KEY",
         "test_endpoint": "https://api.tfl.gov.uk/Line/Meta/Modes",
-        "auth_type": "param"
-    },
-    "google_maps": {
-        "name": "Google Maps",
-        "required": False,
-        "env_var": "GOOGLE_MAPS_API_KEY",
-        "test_endpoint": "https://maps.googleapis.com/maps/api/geocode/json?address=SW1A+1AA",
         "auth_type": "param"
     },
     "police": {
@@ -99,12 +92,7 @@ def verify_api(api_id: str, config: Dict) -> Tuple[bool, str]:
             # API key as query parameter
             api_key = os.getenv(env_var)
             # Different param names for different APIs
-            if api_id == "tfl":
-                params = {"app_key": api_key}
-            elif api_id == "google_maps":
-                params = {"key": api_key}
-            else:
-                params = {"api_key": api_key}
+            params = {"app_key": api_key} if api_id == "tfl" else {"api_key": api_key}
 
             response = requests.get(endpoint, params=params, timeout=10)
 
@@ -183,7 +171,7 @@ def verify_all_apis(verbose: bool = False) -> Dict[str, Dict]:
 
     if verbose:
         print("="*80)
-        print("API VERIFICATION - Phase 2: Link")
+        print("API VERIFICATION")
         print("="*80)
         print("")
 
@@ -231,9 +219,7 @@ def print_summary(results: Dict[str, Dict]) -> None:
     if all_required_pass:
         print("[SUCCESS] READY TO PROCEED - All required APIs verified")
         print("")
-        print("Next steps:")
-        print("1. Proceed to Phase 3: Architect (build tools/)")
-        print("2. Update gemini.md Link status to verified")
+        print("Next step: run the pipeline (python demo_pipeline.py --help)")
     else:
         print("[FAILED] NOT READY - Some required APIs failed")
         print("")
@@ -247,28 +233,6 @@ def print_summary(results: Dict[str, Dict]) -> None:
     print("="*80)
 
 
-def update_gemini_md(results: Dict[str, Dict]) -> None:
-    """
-    Update gemini.md with verification results.
-
-    Args:
-        results: Verification results dict
-    """
-    try:
-        # This would update the gemini.md file programmatically
-        # For now, just print what to update
-        print("")
-        print("Update gemini.md:")
-        print("-" * 80)
-        for api_id, result in results.items():
-            status = "[OK] VERIFIED" if result["success"] else "[FAIL] FAILED"
-            print(f"| {result['name']:30} | {status:15} | {result['message']:30} |")
-        print("-" * 80)
-
-    except Exception as e:
-        print(f"[WARNING] Could not update gemini.md: {e}")
-
-
 if __name__ == "__main__":
     verbose = "--verbose" in sys.argv or "-v" in sys.argv
 
@@ -278,9 +242,6 @@ if __name__ == "__main__":
     results = verify_all_apis(verbose=True)
 
     print_summary(results)
-
-    if "--update-gemini" in sys.argv:
-        update_gemini_md(results)
 
     # Exit code: 0 if all required pass, 1 otherwise
     all_required_pass = all(

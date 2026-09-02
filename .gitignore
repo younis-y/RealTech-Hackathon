@@ -1,8 +1,22 @@
 # Environment variables and secrets
 .env
-.env.local
-.env.production
-.env.development
+.env.*
+!.env.template
+
+# Keys and certificates
+*.pem
+*.key
+*.p12
+id_rsa*
+*-service-account.json
+
+# Local agent/editor state
+.claude/settings.local.json
+
+# Media (kept out of git; link externally instead)
+*.mp4
+*.mov
+*.avi
 
 # Temporary files and intermediates
 .tmp/

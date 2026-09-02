@@ -2,8 +2,6 @@
 """
 Area Scoring Engine
 Calculates persona-specific scores for areas based on enrichment data.
-Architecture SOP: architecture/02_scoring_engine.md (to be created)
-Data Schema: gemini.md (#8 Recommendation Output Schema)
 """
 
 import os
@@ -14,7 +12,7 @@ from datetime import datetime
 # Add parent directory to path
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-# Persona-specific weights (from gemini.md Discovery Questions)
+# Persona-specific weights. These are hand-set hackathon defaults, not fitted.
 PERSONA_WEIGHTS = {
     "student": {
         "affordability": 0.35,      # 35% - Most important for students

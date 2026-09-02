@@ -2,8 +2,6 @@
 """
 Crime Data Fetcher
 Fetches crime statistics from UK Police Data API (data.police.uk).
-Architecture SOP: architecture/01_data_pipeline.md (Stage 3)
-Data Schema: gemini.md (#4 Crime Data Response Schema)
 """
 
 import os
