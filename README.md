@@ -1,12 +1,20 @@
 # Veo area recommender
 
-Persona-weighted ranking of London postcode districts. A hackathon prototype in
-three layers — Markdown directives, an LLM orchestrator, and deterministic
-Python workers — that shortlists districts by budget, scores them on six
-factors, and prints the weight and contribution behind every score.
+Persona-weighted ranking of London postcode districts, built at a hackathon with
+[@MasteraSnackin](https://github.com/MasteraSnackin).
 
-**Most of the numbers it prints are synthetic.** Read the provenance section
-before you believe any of them.
+The interesting piece is the architecture: **workflow logic lives in Markdown
+directives read at runtime by an LLM orchestrator**, which then calls
+deterministic Python workers. Changing how a persona weighs schools against
+commute time means editing a Markdown file, not redeploying code — while the
+scoring itself stays reproducible and inspectable rather than being left to the
+model.
+
+The design goal was a **fully auditable recommendation**: no black-box score,
+every weight and contribution printed alongside the result. Live UK Police crime
+and OpenStreetMap amenity data feed two of the six factors; the remaining four
+run on synthetic placeholders, and the provenance table below marks which is
+which for every factor.
 
 ![Python](https://img.shields.io/badge/python-3.8%2B-blue)
 ![Next.js](https://img.shields.io/badge/next.js-14.2-black)
